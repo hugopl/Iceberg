@@ -34,6 +34,7 @@
 
 #include <list>
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
@@ -43,8 +44,7 @@ Monitor::Monitor( HostInfoManager *m, QObject *parent)
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
     checkScheduler();
-#warning Use some seed here
-    qsrand(0);
+    qsrand(std::time(0));
 }
 
 Monitor::~Monitor()
