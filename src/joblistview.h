@@ -38,6 +38,7 @@ class QTimer;
 
 class JobListViewItem : public Q3ListViewItem
 {
+    Q_DECLARE_TR_FUNCTIONS(JobListViewItem)
 public:
 
     JobListViewItem( Q3ListView* parent, const Job& job );

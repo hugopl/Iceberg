@@ -70,9 +70,8 @@ void JobListViewItem::updateText( const Job& job)
     setText( JobColumnReal, QString::number( job.real_msec ) );
     setText( JobColumnUser, QString::number( job.user_msec ) );
     setText( JobColumnFaults, QString::number( job.pfaults ) );
-#warning Port those lines!!
-//     setText( JobColumnSizeIn, KGlobal::locale()->formatByteSize( job.in_uncompressed ) );
-//     setText( JobColumnSizeOut, KGlobal::locale()->formatByteSize( job.out_uncompressed ) );
+    setText( JobColumnSizeIn, tr("%1 KiB").arg(QString::number(job.in_uncompressed/1024, 'g', 2)));
+    setText( JobColumnSizeOut, tr("%1 KiB").arg(QString::number(job.out_uncompressed/1024, 'g', 2)));
 
     if ( fileNameChanged )
         updateFileName();
