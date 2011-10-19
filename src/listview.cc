@@ -24,9 +24,7 @@
 
 #include "joblistview.h"
 
-#include <qlayout.h>
-
-#include <KGlobal>
+#include <QVBoxLayout>
 
 ListStatusView::ListStatusView( HostInfoManager* manager,
                                 QWidget* parent )

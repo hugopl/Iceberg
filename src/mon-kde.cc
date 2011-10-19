@@ -21,7 +21,10 @@
 */
 
 #include "mon-kde.h"
-
+#include <QApplication>
+#include <QMenu>
+#include <QMenuBar>
+#include <QSettings>
 #include "detailedhostview.h"
 #include "ganttstatusview.h"
 #include "hostinfo.h"
@@ -31,72 +34,68 @@
 #include "poolview.h"
 #include "summaryview.h"
 
-#include <kaboutdata.h>
-#include <kaction.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kconfig.h>
-#include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kstandardaction.h>
-#include <ktoggleaction.h>
-#include <kactioncollection.h>
-#include <kconfiggroup.h>
-#include <kselectaction.h>
-#include <kmenubar.h>
-
-#include <QMenu>
-
 MainWindow::MainWindow( QWidget *parent )
-  : KXmlGuiWindow( parent ), m_view( 0 )
+  : QMainWindow( parent ), m_view( 0 )
 {
     m_hostInfoManager = new HostInfoManager;
 
     m_monitor = new Monitor( m_hostInfoManager, this );
 
-    m_viewMode = new KSelectAction(this);
-    m_viewMode->setText(i18n("&Mode"));
-    actionCollection()->addAction("view_mode", m_viewMode);
+    m_viewMode = new QActionGroup(this);
 
-    QAction* action = m_viewMode->addAction(i18n( "&List View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
 
-    action = m_viewMode->addAction(i18n( "&Star View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
+    QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+    QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
+    QMenu* modeMenu = viewMenu->addMenu(tr("&Mode"));
 
-    action = m_viewMode->addAction(i18n( "&Pool View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupPoolView() ) );
+    m_listView = modeMenu->addAction(tr( "&List View" ));
+    m_listView->setCheckable(true);
+    m_viewMode->addAction(m_listView);
+    connect( m_listView, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
 
-    action = m_viewMode->addAction(i18n( "&Gantt View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
+    m_starView = modeMenu->addAction(tr( "&Star View" ));
+    m_starView->setCheckable(true);
+    m_viewMode->addAction(m_starView);
+    connect( m_starView, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
 
-    action = m_viewMode->addAction(i18n( "Summary &View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
+    m_poolView = modeMenu->addAction(tr( "&Pool View" ));
+    m_poolView->setCheckable(true);
+    m_viewMode->addAction(m_poolView);
+    connect( m_poolView, SIGNAL( triggered() ), this, SLOT( setupPoolView() ) );
 
-    action = m_viewMode->addAction(i18n( "&Detailed Host View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
+    m_ganttView = modeMenu->addAction(tr( "&Gantt View" ));
+    m_ganttView->setCheckable(true);
+    m_viewMode->addAction(m_ganttView);
+    connect( m_ganttView, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
 
+    m_summaryView = modeMenu->addAction(tr( "Summary &View" ));
+    m_summaryView->setCheckable(true);
+    m_viewMode->addAction(m_summaryView);
+    connect( m_summaryView, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
+
+    m_detailedView = modeMenu->addAction(tr( "&Detailed Host View" ));
+    m_detailedView->setCheckable(true);
+    m_viewMode->addAction(m_detailedView);
+    connect( m_detailedView, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
+/*
     KStandardAction::quit( this, SLOT( close() ), actionCollection() );
 
     action = actionCollection()->addAction("view_stop");
-    action->setText(i18n("Stop"));
+    action->setText(tr("Stop"));
     connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
 
     action = actionCollection()->addAction("view_start");
-    action->setText(i18n("Start"));
+    action->setText(tr("Start"));
     connect( action, SIGNAL( triggered() ), this, SLOT( startView() ) );
 
     action = actionCollection()->addAction("check_nodes");
-    action->setText(i18n("Check Nodes"));
+    action->setText(tr("Check Nodes"));
     connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
 
     action = actionCollection()->addAction("configure_view");
-    action->setText(i18n("Configure View..."));
+    action->setText(tr("Configure View..."));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
-
-    setupGUI();
+*/
     readSettings();
 }
 
@@ -109,41 +108,49 @@ MainWindow::~MainWindow()
 
 void MainWindow::readSettings()
 {
-  KConfigGroup cfg(KGlobal::config(), "View" );
-  QString viewId = cfg.readEntry( "CurrentView", "star" );
+    QSettings cfg;
+    QString viewId = cfg.value( "CurrentView", "star" ).toString();
 
-  m_viewMode->blockSignals(true);
-  if ( viewId == "gantt" ) {
-    setupGanttView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[GanttViewType]);
+    m_viewMode->blockSignals(true);
 
-  } else if ( viewId == "list" ) {
-    setupListView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[ListViewType]);
+    if ( viewId == "gantt" ) {
+        setupGanttView();
+        m_ganttView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[GanttViewType]);
 
-  } else if ( viewId == "star" ) {
-    setupStarView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
+    } else if ( viewId == "list" ) {
+        setupListView();
+        m_listView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[ListViewType]);
 
-  } else if ( viewId == "pool" ) {
-    setupPoolView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[PoolViewType]);
+    } else if ( viewId == "star" ) {
+        setupStarView();
+        m_starView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
 
-  } else if ( viewId == "detailedhost" ) {
-    setupDetailedHostView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[DetailedHostViewType]);
+    } else if ( viewId == "pool" ) {
+        setupPoolView();
+        m_poolView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[PoolViewType]);
 
-  } else {
-    setupSummaryView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[SummaryViewType]);
-  }
-  m_viewMode->blockSignals(false);
+    } else if ( viewId == "detailedhost" ) {
+        setupDetailedHostView();
+        m_detailedView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[DetailedHostViewType]);
+
+    } else {
+        setupSummaryView();
+        m_summaryView->setChecked(true);
+//         m_viewMode->setCurrentAction(m_viewMode->actions()[SummaryViewType]);
+    }
+
+    m_viewMode->blockSignals(false);
 }
 
 void MainWindow::writeSettings()
 {
-  KConfigGroup cfg(KGlobal::config(), "View" );
-  cfg.writeEntry( "CurrentView", m_view->id() );
+  QSettings cfg;
+  cfg.setValue( "CurrentView", m_view->id() );
 }
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
@@ -163,41 +170,31 @@ void MainWindow::setupListView()
 void MainWindow::setupSummaryView()
 {
     setupView( new SummaryView( m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_foo_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+    m_summaryView->setChecked(true);
 }
 
 void MainWindow::setupGanttView()
 {
     setupView( new GanttStatusView( m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_gantt_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+    m_ganttView->setChecked(true);
 }
 
 void MainWindow::setupPoolView()
 {
     setupView( new PoolView( m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_pool_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+    m_poolView->setChecked(true);
 }
 
 void MainWindow::setupStarView()
 {
     setupView( new StarView( m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_star_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+    m_starView->setChecked(true);
 }
 
 void MainWindow::setupDetailedHostView()
 {
     setupView( new DetailedHostView( m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_detailed_host_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+    m_detailedView->setChecked(true);
 }
 
 void MainWindow::stopView()
@@ -226,37 +223,39 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
 }
 
 const char * rs_program_name = "icemon";
-const char * const appName = I18N_NOOP( "Icecream Monitor" );
+const char * const appName = QT_TR_NOOP( "Icecream Monitor" );
 const char * const version = "2.0";
-const char * const description = I18N_NOOP( "Icecream monitor for KDE" );
-const char * const copyright = I18N_NOOP( "(c) 2003,2004, The icecream developers" );
+const char * const description = QT_TR_NOOP( "Icecream monitor for KDE" );
+const char * const copyright = QT_TR_NOOP( "(c) 2003,2004, The icecream developers" );
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
-  KAboutData aboutData( rs_program_name, 0, ki18n(appName), version, ki18n(description),
-                        KAboutData::License_GPL_V2, ki18n(copyright) );
-  aboutData.addAuthor( ki18n("Frerich Raabe"), KLocalizedString(), "raabe@kde.org" );
-  aboutData.addAuthor( ki18n("Stephan Kulow"), KLocalizedString(), "coolo@kde.org" );
-  aboutData.addAuthor( ki18n("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
+/*
+  KAboutData aboutData( rs_program_name, 0, ktr(appName), version, ktr(description),
+                        KAboutData::License_GPL_V2, ktr(copyright) );
+  aboutData.addAuthor( ktr("Frerich Raabe"), KLocalizedString(), "raabe@kde.org" );
+  aboutData.addAuthor( ktr("Stephan Kulow"), KLocalizedString(), "coolo@kde.org" );
+  aboutData.addAuthor( ktr("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
 
   KCmdLineArgs::init( argc, argv, &aboutData );
 
   KCmdLineOptions options;
   options.add("n");
-  options.add("netname <name>", ki18n("Icecream network name"));
+  options.add("netname <name>", ktr("Icecream network name"));
   KCmdLineArgs::addCmdLineOptions( options );
   KApplication app;
-  MainWindow *mainWidget = new MainWindow( 0 );
+*/
+    QApplication app(argc, argv);
+    app.setApplicationName(appName);
+    app.setApplicationVersion(version);
+    MainWindow* mainWidget = new MainWindow( 0 );
+    QStringList args = app.arguments();
+    int nIndex = args.indexOf("-n");
+    if (nIndex && nIndex < args.count() +1)
+        mainWidget->setCurrentNet(args[nIndex + 1].local8Bit());
+    mainWidget->show();
 
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QByteArray netName = args->getOption( "netname" ).toLatin1();
-  if ( !netName.isEmpty() ) {
-    mainWidget->setCurrentNet( netName );
-  }
-
-  mainWidget->show();
-
-  return app.exec();
+    return app.exec();
 }
 
 #include "mon-kde.moc"

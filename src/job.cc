@@ -21,28 +21,27 @@
 */
 
 #include "job.h"
-#include <QObject>
 
 QString Job::stateAsString() const
 {
     switch ( m_state ) {
     case WaitingForCS:
-        return i18n( "Waiting" );
+        return tr( "Waiting" );
         break;
     case Compiling:
-        return i18n( "Compiling" );
+        return tr( "Compiling" );
         break;
     case Finished:
-        return i18n( "Finished" );
+        return tr( "Finished" );
         break;
     case Failed:
-        return i18n( "Failed" );
+        return tr( "Failed" );
         break;
     case Idle:
-        return i18n( "Idle" );
+        return tr( "Idle" );
         break;
     case LocalOnly:
-        return i18n( "LocalOnly" );
+        return tr( "LocalOnly" );
         break;
     }
     return QString();

@@ -19,9 +19,6 @@
 */
 
 #include "hostinfo.h"
-
-#include <KLocale>
-
 #include <assert.h>
 
 QVector<QColor> HostInfo::mColorTable;
@@ -29,34 +26,34 @@ QMap<int,QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
 {
-    initColor( "#A5080B", i18n("cherry") );
-    initColor( "#76d26f", i18n("pistachio"));
-    initColor( "#664a08", i18n("chocolate"));
-    initColor( "#4c9dff", i18n("smurf"));
-    initColor( "#6c2ca8", i18n("blueberry"));
-    initColor( "#fa8344", i18n("orange"));
-    initColor( "#55CFBD", i18n("mint"));
-    initColor( "#db1230", i18n("strawberry"));
-    initColor( "#a6ea5e", i18n("apple"));
-    initColor( "#D6A3D8", i18n("bubblegum"));
-    initColor( "#f2aa4d", i18n("peach"));
-    initColor( "#aa1387", i18n("plum"));
-    initColor( "#26c3f7", i18n("polar sea"));
-    initColor( "#b8850e", i18n("nut"));
-    initColor( "#6a188d", i18n("blackberry"));
-    initColor( "#24b063", i18n("woodruff"));
-    initColor( "#ffff0f", i18n("banana"));
-    initColor( "#1e1407", i18n("mocha"));
-    initColor( "#29B450", i18n("kiwi"));
-    initColor( "#F8DD31", i18n("lemon"));
-    initColor( "#fa7e91", i18n("raspberry"));
-    initColor( "#c5a243", i18n("caramel"));
-    initColor( "#b8bcff", i18n("blueberry"));
+    initColor( "#A5080B", tr("cherry") );
+    initColor( "#76d26f", tr("pistachio"));
+    initColor( "#664a08", tr("chocolate"));
+    initColor( "#4c9dff", tr("smurf"));
+    initColor( "#6c2ca8", tr("blueberry"));
+    initColor( "#fa8344", tr("orange"));
+    initColor( "#55CFBD", tr("mint"));
+    initColor( "#db1230", tr("strawberry"));
+    initColor( "#a6ea5e", tr("apple"));
+    initColor( "#D6A3D8", tr("bubblegum"));
+    initColor( "#f2aa4d", tr("peach"));
+    initColor( "#aa1387", tr("plum"));
+    initColor( "#26c3f7", tr("polar sea"));
+    initColor( "#b8850e", tr("nut"));
+    initColor( "#6a188d", tr("blackberry"));
+    initColor( "#24b063", tr("woodruff"));
+    initColor( "#ffff0f", tr("banana"));
+    initColor( "#1e1407", tr("mocha"));
+    initColor( "#29B450", tr("kiwi"));
+    initColor( "#F8DD31", tr("lemon"));
+    initColor( "#fa7e91", tr("raspberry"));
+    initColor( "#c5a243", tr("caramel"));
+    initColor( "#b8bcff", tr("blueberry"));
     // try to make the count a prime number (reminder: 19, 23, 29, 31)
-    // initColor( "#ffb8c0", i18n("blackcurrant"));
-    // initColor( "#f7d36f", i18n("passionfruit"));
-    // initColor( "#d51013", i18n("pomegranate"));
-    // initColor( "#C2C032", i18n("pumpkin" ) );
+    // initColor( "#ffb8c0", tr("blackcurrant"));
+    // initColor( "#f7d36f", tr("passionfruit"));
+    // initColor( "#d51013", tr("pomegranate"));
+    // initColor( "#C2C032", tr("pumpkin" ) );
 }
 
 void HostInfo::initColor( const QString &value , const QString &name )
@@ -71,7 +68,7 @@ QString HostInfo::colorName( const QColor &c )
 {
   int key = c.red() + c.green() * 256 + c.blue() * 65536;
 
-  return mColorNameMap.value( key, i18n("<unknown>") );
+  return mColorNameMap.value( key, tr("<unknown>") );
 }
 
 HostInfo::HostInfo( unsigned int id )
@@ -228,7 +225,7 @@ QString HostInfoManager::nameForHost( unsigned int id ) const
   HostInfo *hostInfo = find( id );
   if ( hostInfo ) return hostInfo->name();
 
-  return i18n("<unknown>");
+  return tr("<unknown>");
 }
 
 QColor HostInfoManager::hostColor( unsigned int id ) const

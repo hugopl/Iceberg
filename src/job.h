@@ -22,14 +22,15 @@
 #ifndef ICEMON_JOB_H
 #define ICEMON_JOB_H
 
-#include <QString>
+#include <QCoreApplication>
 #include <time.h>
 #include <QMap>
 
-#include <KLocale>
 
 class Job
 {
+Q_DECLARE_TR_FUNCTIONS(Job)
+
   public:
     enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
     explicit Job(unsigned int id = 0,

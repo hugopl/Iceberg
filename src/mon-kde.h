@@ -22,14 +22,14 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include <kxmlguiwindow.h>
+#include <QMainWindow>
 
 class HostInfoManager;
 class Monitor;
 class StatusView;
-class KSelectAction;
+class QActionGroup;
 
-class MainWindow : public KXmlGuiWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
   public:
@@ -70,7 +70,13 @@ class MainWindow : public KXmlGuiWindow
       DetailedHostViewType
     };
 
-    KSelectAction* m_viewMode;
+    QActionGroup* m_viewMode;
+    QAction* m_listView;
+    QAction* m_starView;
+    QAction* m_poolView;
+    QAction* m_detailedView;
+    QAction* m_ganttView;
+    QAction* m_summaryView;
 };
 
 #endif // MON_KDE_H

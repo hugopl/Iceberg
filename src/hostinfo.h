@@ -20,6 +20,7 @@
 #ifndef ICEMON_HOSTINFO_H
 #define ICEMON_HOSTINFO_H
 
+#include <QCoreApplication>
 #include <QString>
 #include <QColor>
 #include <QMap>
@@ -27,7 +28,8 @@
 
 class HostInfo
 {
-  public:
+    Q_DECLARE_TR_FUNCTIONS(HostInfo)
+public:
     HostInfo( unsigned int id );
 
     unsigned int id() const;
@@ -51,13 +53,13 @@ class HostInfo
 
     unsigned int serverLoad() const;
 
-  protected:
+protected:
     static void initColor( const QString &value, const QString &name );
 
     QColor createColor();
     QColor createColor( const QString &name );
 
-  private:
+private:
     unsigned int mId;
     QString mName;
     QColor mColor;
@@ -78,7 +80,8 @@ class HostInfo
 
 class HostInfoManager
 {
-  public:
+Q_DECLARE_TR_FUNCTIONS(HostInfoManager)
+public:
     HostInfoManager();
     ~HostInfoManager();
 
@@ -89,7 +92,7 @@ class HostInfoManager
     HostMap hostMap() const;
 
     HostInfo *checkNode( unsigned int hostid,
-                         const HostInfo::StatsMap &statmsg );
+                        const HostInfo::StatsMap &statmsg );
 
     QString nameForHost( unsigned int id ) const;
     QColor hostColor( unsigned int id ) const;
@@ -100,7 +103,7 @@ class HostInfoManager
     QString networkName() const { return mNetworkName; }
     void setNetworkName( const QString& networkName );
 
-  private:
+private:
     HostMap mHostMap;
     QString mSchedulerName;
     QString mNetworkName;

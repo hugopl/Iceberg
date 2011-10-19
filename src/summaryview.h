@@ -13,6 +13,7 @@
 
 #include "statusview.h"
 
+#include <QCoreApplication>
 #include <QScrollArea>
 #include <QResizeEvent>
 
@@ -23,6 +24,7 @@ class SummaryView;
 
 class SummaryViewItem
 {
+    Q_DECLARE_TR_FUNCTIONS(SummaryViewItem)
 public:
     SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout);
     ~SummaryViewItem();

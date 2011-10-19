@@ -23,13 +23,9 @@
 #include "joblistview.h"
 
 #include "hostinfo.h"
-
-#include <kglobal.h>
-#include <klocale.h>
-
-#include <qdatetime.h>
-#include <qdir.h>
-#include <qtimer.h>
+#include <QDateTime>
+#include <QDir>
+#include <QTimer>
 
 
 enum JobJobColumns
@@ -73,8 +69,9 @@ void JobListViewItem::updateText( const Job& job)
     setText( JobColumnReal, QString::number( job.real_msec ) );
     setText( JobColumnUser, QString::number( job.user_msec ) );
     setText( JobColumnFaults, QString::number( job.pfaults ) );
-    setText( JobColumnSizeIn, KGlobal::locale()->formatByteSize( job.in_uncompressed ) );
-    setText( JobColumnSizeOut, KGlobal::locale()->formatByteSize( job.out_uncompressed ) );
+#warning Port those lines!!
+//     setText( JobColumnSizeIn, KGlobal::locale()->formatByteSize( job.in_uncompressed ) );
+//     setText( JobColumnSizeOut, KGlobal::locale()->formatByteSize( job.out_uncompressed ) );
 
     if ( fileNameChanged )
         updateFileName();
@@ -166,16 +163,16 @@ JobListView::JobListView( const HostInfoManager* manager,
       mExpireDuration( -1 ),
       mExpireTimer( new QTimer( this ) )
 {
-    addColumn( i18n( "ID" ) );
-    addColumn( i18n( "Filename" ) );
-    addColumn( i18n( "Client" ) );
-    addColumn( i18n( "Server" ) );
-    addColumn( i18n( "State" ) );
-    addColumn( i18n( "Real" ) );
-    addColumn( i18n( "User" ) );
-    addColumn( i18n( "Faults" ) );
-    addColumn( i18n( "Size In" ) );
-    addColumn( i18n( "Size Out" ) );
+    addColumn( tr( "ID" ) );
+    addColumn( tr( "Filename" ) );
+    addColumn( tr( "Client" ) );
+    addColumn( tr( "Server" ) );
+    addColumn( tr( "State" ) );
+    addColumn( tr( "Real" ) );
+    addColumn( tr( "User" ) );
+    addColumn( tr( "Faults" ) );
+    addColumn( tr( "Size In" ) );
+    addColumn( tr( "Size Out" ) );
 
     setColumnAlignment( JobColumnID, Qt::AlignRight );
     setColumnAlignment( JobColumnReal, Qt::AlignRight );

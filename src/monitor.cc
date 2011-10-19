@@ -27,13 +27,9 @@
 #include "statusview.h"
 
 #include <icecc/comm.h>
-
-#include <klocale.h>
-#include <kdebug.h>
-#include <krandom.h>
-
-#include <qsocketnotifier.h>
-#include <qtimer.h>
+#include <QSocketNotifier>
+#include <QTimer>
+#include <QDebug>
 
 #include <list>
 #include <iostream>
@@ -46,6 +42,8 @@ Monitor::Monitor( HostInfoManager *m, QObject *parent)
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
     checkScheduler();
+#warning Use some seed here
+    qsrand(0);
 }
 
 Monitor::~Monitor()
@@ -69,7 +67,7 @@ void Monitor::checkScheduler(bool deleteit)
         setSchedulerState(false);
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 1000+(KRandom::random()&1023), this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( 1000+(qrand() & 1023), this, SLOT( slotCheckScheduler() ) );
 }
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
@@ -141,7 +139,7 @@ void Monitor::slotCheckScheduler()
                         QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
         if (m_fd_type == QSocketNotifier::Read)
-            QTimer::singleShot(1000+(KRandom::random()&1023), this, SLOT(slotCheckScheduler()));
+            QTimer::singleShot(1000+(qrand() & 1023), this, SLOT(slotCheckScheduler()));
 
     }
     setSchedulerState( false );
