@@ -4,6 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,8 +44,10 @@ MainWindow::MainWindow( QWidget *parent )
 
     m_viewMode = new QActionGroup(this);
 
-
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+    QAction* quitAction = fileMenu->addAction(tr("&Quit"));
+    connect(quitAction, SIGNAL( triggered() ), this, SLOT( close() ));
+
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* modeMenu = viewMenu->addMenu(tr("&Mode"));
 
@@ -77,25 +80,19 @@ MainWindow::MainWindow( QWidget *parent )
     m_detailedView->setCheckable(true);
     m_viewMode->addAction(m_detailedView);
     connect( m_detailedView, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
-/*
-    KStandardAction::quit( this, SLOT( close() ), actionCollection() );
 
-    action = actionCollection()->addAction("view_stop");
-    action->setText(tr("Stop"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
 
-    action = actionCollection()->addAction("view_start");
-    action->setText(tr("Start"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( startView() ) );
+    QAction* actionStart = viewMenu->addAction( tr("&Start") );
+    connect( actionStart, SIGNAL( triggered() ), this, SLOT( startView() ) );
+    QAction* actionStop = viewMenu->addAction( tr("Stop") );
+    connect( actionStop, SIGNAL( triggered() ), this, SLOT( stopView() ) );
+    viewMenu->addSeparator();
+    QAction* actionCheckNodes = viewMenu->addAction( tr("Check Nodes") );
+    connect( actionCheckNodes, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
+    viewMenu->addSeparator();
+    QAction* actionConfigView = viewMenu->addAction( tr("Configure View...") );
+    connect( actionConfigView, SIGNAL( triggered() ), this, SLOT( configureView() ) );
 
-    action = actionCollection()->addAction("check_nodes");
-    action->setText(tr("Check Nodes"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
-
-    action = actionCollection()->addAction("configure_view");
-    action->setText(tr("Configure View..."));
-    connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
-*/
     readSettings();
 }
 
@@ -230,21 +227,6 @@ const char * const copyright = QT_TR_NOOP( "(c) 2003,2004, The icecream develope
 
 int main(int argc, char** argv)
 {
-/*
-  KAboutData aboutData( rs_program_name, 0, ktr(appName), version, ktr(description),
-                        KAboutData::License_GPL_V2, ktr(copyright) );
-  aboutData.addAuthor( ktr("Frerich Raabe"), KLocalizedString(), "raabe@kde.org" );
-  aboutData.addAuthor( ktr("Stephan Kulow"), KLocalizedString(), "coolo@kde.org" );
-  aboutData.addAuthor( ktr("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
-
-  KCmdLineArgs::init( argc, argv, &aboutData );
-
-  KCmdLineOptions options;
-  options.add("n");
-  options.add("netname <name>", ktr("Icecream network name"));
-  KCmdLineArgs::addCmdLineOptions( options );
-  KApplication app;
-*/
     QApplication app(argc, argv);
     app.setApplicationName(appName);
     app.setApplicationVersion(version);
@@ -252,7 +234,7 @@ int main(int argc, char** argv)
     QStringList args = app.arguments();
     int nIndex = args.indexOf("-n");
     if (nIndex && nIndex < args.count() +1)
-        mainWidget->setCurrentNet(args[nIndex + 1].local8Bit());
+        mainWidget->setCurrentNet(args[nIndex + 1].toLocal8Bit());
     mainWidget->show();
 
     return app.exec();
