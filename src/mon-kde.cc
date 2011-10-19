@@ -113,32 +113,21 @@ void MainWindow::readSettings()
     if ( viewId == "gantt" ) {
         setupGanttView();
         m_ganttView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[GanttViewType]);
-
     } else if ( viewId == "list" ) {
         setupListView();
         m_listView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[ListViewType]);
-
     } else if ( viewId == "star" ) {
         setupStarView();
         m_starView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
-
     } else if ( viewId == "pool" ) {
         setupPoolView();
         m_poolView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[PoolViewType]);
-
     } else if ( viewId == "detailedhost" ) {
         setupDetailedHostView();
         m_detailedView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[DetailedHostViewType]);
-
     } else {
         setupSummaryView();
         m_summaryView->setChecked(true);
-//         m_viewMode->setCurrentAction(m_viewMode->actions()[SummaryViewType]);
     }
 
     m_viewMode->blockSignals(false);

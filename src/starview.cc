@@ -25,31 +25,27 @@
 #include "hostinfo.h"
 
 #include <QBoxLayout>
-#include <qtooltip.h>
-#include <qslider.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qregexp.h>
-#include <qcheckbox.h>
-#include <qdir.h>
+#include <QToolTip>
+#include <QSlider>
+#include <QLabel>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QRegExp>
+#include <QCheckBox>
+#include <QDir>
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QDialogButtonBox>
 #include <QDebug>
-
-#include <math.h>
+#include <cmath>
 
 static bool suppressDomain = false;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     : QDialog( parent )
 {
-/*
-    setButtons( Close );
-    setEscapeButton( Close );
-    showButtonSeparator( true );
-*/
+    setContentsMargins(10, 10, 10, 10);
     QBoxLayout *topLayout = new QVBoxLayout( this );
     topLayout->setMargin( 0 );
 
@@ -87,8 +83,9 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
              SLOT( slotSuppressDomainName ( bool ) ) );
 
-    connect( this, SIGNAL( closeClicked() ), SLOT( hide() ) );
-
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
+    topLayout->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(hide()));
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )
