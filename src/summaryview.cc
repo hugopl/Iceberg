@@ -1,5 +1,6 @@
 /*
  * (C) 2004 Scott Wheeler <wheeler@kde.org>
+ * Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
