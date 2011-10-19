@@ -285,14 +285,6 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
     m_schedulerItem->setZValue(150);
     centerSchedulerItem();
     m_schedulerItem->show();
-
-#warning I want the litle computer icon!
-/*
-    m_iconPath = KIconLoader::global()->iconPath( "computer", -22, true );
-    if ( !m_iconPath.isEmpty() ) {
-        QDir::addSearchPath( "icons", QFileInfo( m_iconPath ).canonicalPath() );
-    }
-*/
     createKnownHosts();
 }
 
@@ -483,7 +475,7 @@ bool StarView::event ( QEvent* e )
         if ( hostInfo ) {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + item->hostName() +
+                           "<img align=\"right\" source=\":/computer.png\"><br><b>" + item->hostName() +
                            "</b><br>" +
 
                            "<table>" +
@@ -503,7 +495,7 @@ bool StarView::event ( QEvent* e )
         } else {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
+                           "<img align=\"right\" source=\":/computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
                            "<tr><td>" + tr("Host: %1", hostInfoManager()->schedulerName()) + "</td></tr>" +
                            "<tr><td>" + tr("Network name: %1", hostInfoManager()->networkName()) + "</td></tr>" +

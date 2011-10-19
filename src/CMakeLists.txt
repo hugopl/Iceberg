@@ -26,8 +26,8 @@ set(icemon_SRCS
 )
 
 qt4_automoc(${icemon_SRCS})
-
-add_executable(icemon ${icemon_SRCS})
+qt4_add_resources(icemon_RCC icons.qrc)
+add_executable(icemon ${icemon_SRCS} ${icemon_RCC})
 
 target_link_libraries(icemon ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
 
