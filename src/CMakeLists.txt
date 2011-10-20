@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${QT_QTNETWORK_INCLUDE_DIR}
                     ${QT_QT3SUPPORT_INCLUDE_DIR})
 
-set(icemon_SRCS
+set(iceberg_SRCS
   job.cc
   monitor.cc
   mon-kde.cc
@@ -25,18 +25,18 @@ set(icemon_SRCS
   poolview.cc
 )
 
-qt4_automoc(${icemon_SRCS})
-qt4_add_resources(icemon_RCC icons.qrc)
-add_executable(icemon ${icemon_SRCS} ${icemon_RCC})
+qt4_automoc(${iceberg_SRCS})
+qt4_add_resources(iceberg_RCC icons.qrc)
+add_executable(iceberg ${iceberg_SRCS} ${iceberg_RCC})
 
-target_link_libraries(icemon ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
 
 ########### install files ###############
 
-# install(TARGETS icemon ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-# install( FILES icemon.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
-# install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
-
-# kde4_install_icons( ${ICON_INSTALL_DIR}   )
+install(TARGETS iceberg DESTINATION bin)
+install(FILES iceberg.desktop DESTINATION share/applications )
+install(FILES hi16-app-iceberg.png DESTINATION share/icons/hicolor/16x16/apps RENAME iceberg.png)
+install(FILES hi22-app-iceberg.png DESTINATION share/icons/hicolor/22x22/apps RENAME iceberg.png)
+install(FILES hi32-app-iceberg.png DESTINATION share/icons/hicolor/32x32/apps RENAME iceberg.png)
+install(FILES hi48-app-iceberg.png DESTINATION share/icons/hicolor/48x48/apps RENAME iceberg.png)
 

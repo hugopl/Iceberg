@@ -208,18 +208,15 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
 }
 
-const char * rs_program_name = "icemon";
-const char * const appName = QT_TR_NOOP( "Icecream Monitor" );
 const char * const version = "2.0";
-const char * const description = QT_TR_NOOP( "Icecream monitor for KDE" );
-const char * const copyright = QT_TR_NOOP( "(c) 2003,2004, The icecream developers" );
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    app.setApplicationName(appName);
+    app.setApplicationName("Iceberg");
     app.setApplicationVersion(version);
     MainWindow* mainWidget = new MainWindow( 0 );
+    mainWidget->setWindowTitle("Iceberg - Icecc Monitor");
     QStringList args = app.arguments();
     int nIndex = args.indexOf("-n");
     if (nIndex && nIndex < args.count() +1)
