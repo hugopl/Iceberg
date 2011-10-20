@@ -4,6 +4,7 @@ add_definitions (${QT_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${LIBICECREAM_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIR}
                     ${QT_QTCORE_INCLUDE_DIR}
                     ${QT_QTGUI_INCLUDE_DIR}
                     ${QT_QTNETWORK_INCLUDE_DIR}
