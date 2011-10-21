@@ -1,4 +1,4 @@
 Iceberg
 =======
 
-A fork of Icemon, an Icecc monitor, that doesn't depends on KDE libs.
+A fork of Icemon, an Icecc monitor, that doesn't depend on KDE libs.
