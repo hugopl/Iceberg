@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
     void startView();
     void checkNodes();
     void configureView();
+    void showAboutDialog();
 
   private:
     void readSettings();

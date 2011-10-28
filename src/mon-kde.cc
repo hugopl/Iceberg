@@ -34,6 +34,8 @@
 #include "starview.h"
 #include "poolview.h"
 #include "summaryview.h"
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
 
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
@@ -93,6 +95,8 @@ MainWindow::MainWindow( QWidget *parent )
     QAction* actionConfigView = viewMenu->addAction( tr("Configure View...") );
     connect( actionConfigView, SIGNAL( triggered() ), this, SLOT( configureView() ) );
 
+    QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
     readSettings();
 }
 
@@ -208,13 +212,37 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
 }
 
-const char * const version = "2.0";
+#define ICEBERG_VERSION "1.0"
+
+void MainWindow::showAboutDialog()
+{
+    QDialog dlg(0, Qt::Dialog);
+    QVBoxLayout* layout = new QVBoxLayout();
+    QLabel* text = new QLabel(
+        "<table align=\"center\"><tr>"
+        "<td><img source=\":/bigIcon.png\" align=\"center\"/></td>"
+        "<td><h1 align=\"center\">Iceberg</h1><p align=\"center\">Version " ICEBERG_VERSION "</p></td>"
+        "</tr></table>"
+        "<p>Distributed under GPLv2, source code available at <a href=\"http://www.github.com/hugopl/Iceberg\">GitHub</a>!</p>"
+        "<p>Copyright (c) 2003 Frerich Raabe &lt;raabe@kde.org><br>"
+        "Copyright (c) 2003,2004 Stephan Kulow &lt;coolo@kde.org><br>"
+        "Copyright (c) 2003,2004 Cornelius Schumacher &lt;schumacher@kde.org><br>"
+        "Copyright (c) 2011 Hugo Parente Lima &lt;hugo.pl@gmail.com></p>");
+    layout->addWidget(text);
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
+    buttonBox->setCenterButtons(true);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), &dlg, SLOT(close()));
+    dlg.setLayout(layout);
+    dlg.exec();
+}
+
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     app.setApplicationName("Iceberg");
-    app.setApplicationVersion(version);
+    app.setApplicationVersion(ICEBERG_VERSION);
     MainWindow* mainWidget = new MainWindow( 0 );
     mainWidget->setWindowTitle("Iceberg - Icecc Monitor");
     QStringList args = app.arguments();
