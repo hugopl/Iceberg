@@ -97,6 +97,22 @@ MainWindow::MainWindow( QWidget *parent )
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
+
+    // Avoid useless creation and connection if the system does not have a systray
+    if ( QSystemTrayIcon::isSystemTrayAvailable() ) {
+        systemTrayIcon = new QSystemTrayIcon( this );
+        systemTrayIcon->setIcon( QIcon( ":bigIcon.png" ) );
+        systemTrayIcon->show();
+
+        systemTrayMenu = new QMenu( this );
+        systemTrayMenu->addAction( quitAction );
+
+        systemTrayIcon->setContextMenu( systemTrayMenu );
+
+        connect( systemTrayIcon, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ),
+                this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
+    }
+
     readSettings();
 }
 
@@ -227,7 +243,8 @@ void MainWindow::showAboutDialog()
         "<p>Copyright (c) 2003 Frerich Raabe &lt;raabe@kde.org><br>"
         "Copyright (c) 2003,2004 Stephan Kulow &lt;coolo@kde.org><br>"
         "Copyright (c) 2003,2004 Cornelius Schumacher &lt;schumacher@kde.org><br>"
-        "Copyright (c) 2011 Hugo Parente Lima &lt;hugo.pl@gmail.com></p>");
+        "Copyright (c) 2011 Hugo Parente Lima &lt;hugo.pl@gmail.com><br>"
+        "Copyright (c) 2011 Anselmo L. S. Melo &lt;anselmolsm@gmail.com></p>");
     layout->addWidget(text);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
     buttonBox->setCenterButtons(true);
@@ -235,6 +252,20 @@ void MainWindow::showAboutDialog()
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), &dlg, SLOT(close()));
     dlg.setLayout(layout);
     dlg.exec();
+}
+
+void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason )
+{
+    switch ( reason ) {
+     case QSystemTrayIcon::Trigger:
+        isVisible() ? hide() : showNormal();
+        break;
+     case QSystemTrayIcon::Context:
+        systemTrayMenu->show();
+        break;
+     default:
+         ;
+     }
 }
 
 
