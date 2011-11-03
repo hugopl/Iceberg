@@ -21,7 +21,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "mon-kde.h"
+#include "mainwindow.h"
 #include <QApplication>
 #include <QMenu>
 #include <QMenuBar>
@@ -254,4 +254,4 @@ int main(int argc, char** argv)
     return app.exec();
 }
 
-#include "mon-kde.moc"
+#include "mainwindow.moc"

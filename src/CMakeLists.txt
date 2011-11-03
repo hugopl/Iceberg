@@ -13,7 +13,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 set(iceberg_SRCS
   job.cc
   monitor.cc
-  mon-kde.cc
+  mainwindow.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
