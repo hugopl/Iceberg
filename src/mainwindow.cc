@@ -113,6 +113,8 @@ MainWindow::MainWindow( QWidget *parent )
                 this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
     }
 
+    setWindowIcon(QIcon(":bigIcon.png"));
+
     readSettings();
 }
 
