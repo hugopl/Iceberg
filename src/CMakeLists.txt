@@ -11,9 +11,10 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${QT_QT3SUPPORT_INCLUDE_DIR})
 
 set(iceberg_SRCS
+  main.cpp
   job.cc
   monitor.cc
-  mon-kde.cc
+  mainwindow.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc

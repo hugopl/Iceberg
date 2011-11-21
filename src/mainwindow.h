@@ -24,11 +24,13 @@
 #define MON_KDE_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 
 class HostInfoManager;
 class Monitor;
 class StatusView;
 class QActionGroup;
+class QMenu;
 
 class MainWindow : public QMainWindow
 {
@@ -52,6 +54,8 @@ class MainWindow : public QMainWindow
     void checkNodes();
     void configureView();
     void showAboutDialog();
+
+    void systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason );
 
   private:
     void readSettings();
@@ -79,6 +83,8 @@ class MainWindow : public QMainWindow
     QAction* m_detailedView;
     QAction* m_ganttView;
     QAction* m_summaryView;
+    QSystemTrayIcon* systemTrayIcon;
+    QMenu* systemTrayMenu;
 };
 
 #endif // MON_KDE_H

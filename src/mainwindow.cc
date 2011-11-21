@@ -21,8 +21,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "mon-kde.h"
-#include <QApplication>
+#include "mainwindow.h"
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
@@ -34,6 +33,7 @@
 #include "starview.h"
 #include "poolview.h"
 #include "summaryview.h"
+#include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
@@ -97,6 +97,24 @@ MainWindow::MainWindow( QWidget *parent )
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
+
+    // Avoid useless creation and connection if the system does not have a systray
+    if ( QSystemTrayIcon::isSystemTrayAvailable() ) {
+        systemTrayIcon = new QSystemTrayIcon( this );
+        systemTrayIcon->setIcon( QIcon( ":bigIcon.png" ) );
+        systemTrayIcon->show();
+
+        systemTrayMenu = new QMenu( this );
+        systemTrayMenu->addAction( quitAction );
+
+        systemTrayIcon->setContextMenu( systemTrayMenu );
+
+        connect( systemTrayIcon, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ),
+                this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
+    }
+
+    setWindowIcon(QIcon(":bigIcon.png"));
+
     readSettings();
 }
 
@@ -212,8 +230,6 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
 }
 
-#define ICEBERG_VERSION "1.0"
-
 void MainWindow::showAboutDialog()
 {
     QDialog dlg(0, Qt::Dialog);
@@ -227,7 +243,8 @@ void MainWindow::showAboutDialog()
         "<p>Copyright (c) 2003 Frerich Raabe &lt;raabe@kde.org><br>"
         "Copyright (c) 2003,2004 Stephan Kulow &lt;coolo@kde.org><br>"
         "Copyright (c) 2003,2004 Cornelius Schumacher &lt;schumacher@kde.org><br>"
-        "Copyright (c) 2011 Hugo Parente Lima &lt;hugo.pl@gmail.com></p>");
+        "Copyright (c) 2011 Hugo Parente Lima &lt;hugo.pl@gmail.com><br>"
+        "Copyright (c) 2011 Anselmo L. S. Melo &lt;anselmolsm@gmail.com></p>");
     layout->addWidget(text);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
     buttonBox->setCenterButtons(true);
@@ -237,21 +254,18 @@ void MainWindow::showAboutDialog()
     dlg.exec();
 }
 
-
-int main(int argc, char** argv)
+void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason )
 {
-    QApplication app(argc, argv);
-    app.setApplicationName("Iceberg");
-    app.setApplicationVersion(ICEBERG_VERSION);
-    MainWindow* mainWidget = new MainWindow( 0 );
-    mainWidget->setWindowTitle("Iceberg - Icecc Monitor");
-    QStringList args = app.arguments();
-    int nIndex = args.indexOf("-n");
-    if (nIndex && nIndex < args.count() +1)
-        mainWidget->setCurrentNet(args[nIndex + 1].toLocal8Bit());
-    mainWidget->show();
-
-    return app.exec();
+    switch ( reason ) {
+     case QSystemTrayIcon::Trigger:
+        isVisible() ? hide() : showNormal();
+        break;
+     case QSystemTrayIcon::Context:
+        systemTrayMenu->show();
+        break;
+     default:
+         ;
+     }
 }
 
-#include "mon-kde.moc"
+#include "mainwindow.moc"
