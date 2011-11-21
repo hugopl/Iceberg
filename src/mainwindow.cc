@@ -36,6 +36,7 @@
 #include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QDesktopWidget>
 #include <QCloseEvent>
 
 MainWindow::MainWindow( QWidget *parent )
@@ -117,6 +118,14 @@ MainWindow::MainWindow( QWidget *parent )
     setWindowIcon( QIcon(":bigIcon.png") );
 
     readSettings();
+
+    QDesktopWidget w;
+    QRect screenGeometry = w.availableGeometry( this );
+    const QRect defaultRect = QRect( screenGeometry.center()/2, screenGeometry.size()/2 );
+
+    QSettings cfg;
+    QVariant geom = cfg.value( "geometry", defaultRect );
+    setGeometry( geom.toRect() );
 }
 
 MainWindow::~MainWindow()
