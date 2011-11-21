@@ -36,6 +36,7 @@
 #include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QCloseEvent>
 
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
@@ -113,15 +114,13 @@ MainWindow::MainWindow( QWidget *parent )
                 this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
     }
 
-    setWindowIcon(QIcon(":bigIcon.png"));
+    setWindowIcon( QIcon(":bigIcon.png") );
 
     readSettings();
 }
 
 MainWindow::~MainWindow()
 {
-  writeSettings();
-
   delete m_hostInfoManager;
 }
 
@@ -159,6 +158,8 @@ void MainWindow::writeSettings()
 {
   QSettings cfg;
   cfg.setValue( "CurrentView", m_view->id() );
+  cfg.setValue( "geometry", this->geometry() );
+  cfg.sync();
 }
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
@@ -266,6 +267,11 @@ void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reas
      default:
          ;
      }
+}
+
+void MainWindow::closeEvent( QCloseEvent * event )
+{
+    writeSettings();
 }
 
 #include "mainwindow.moc"
