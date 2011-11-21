@@ -7,6 +7,7 @@
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("Iceberg");
     app.setApplicationName("Iceberg");
     app.setApplicationVersion(ICEBERG_VERSION);
     MainWindow* mainWidget = new MainWindow( 0 );
