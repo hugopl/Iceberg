@@ -22,7 +22,6 @@
 */
 
 #include "mainwindow.h"
-#include <QApplication>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
@@ -34,6 +33,7 @@
 #include "starview.h"
 #include "poolview.h"
 #include "summaryview.h"
+#include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
@@ -230,8 +230,6 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
 }
 
-#define ICEBERG_VERSION "1.0"
-
 void MainWindow::showAboutDialog()
 {
     QDialog dlg(0, Qt::Dialog);
@@ -268,23 +266,6 @@ void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reas
      default:
          ;
      }
-}
-
-
-int main(int argc, char** argv)
-{
-    QApplication app(argc, argv);
-    app.setApplicationName("Iceberg");
-    app.setApplicationVersion(ICEBERG_VERSION);
-    MainWindow* mainWidget = new MainWindow( 0 );
-    mainWidget->setWindowTitle("Iceberg - Icecc Monitor");
-    QStringList args = app.arguments();
-    int nIndex = args.indexOf("-n");
-    if (nIndex && nIndex < args.count() +1)
-        mainWidget->setCurrentNet(args[nIndex + 1].toLocal8Bit());
-    mainWidget->show();
-
-    return app.exec();
 }
 
 #include "mainwindow.moc"

@@ -11,6 +11,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${QT_QT3SUPPORT_INCLUDE_DIR})
 
 set(iceberg_SRCS
+  main.cpp
   job.cc
   monitor.cc
   mainwindow.cc
