@@ -28,7 +28,7 @@
 
 #include <Q3ListView>
 #include <QPair>
-#include <Q3ValueList>
+#include <QLinkedList>
 
 
 class HostInfoManager;
@@ -120,7 +120,7 @@ private:
     QTimer* mExpireTimer;
 
     typedef QPair<uint, JobListViewItem*> FinishedJob;
-    typedef Q3ValueList<FinishedJob> FinishedJobs;
+    typedef QLinkedList<FinishedJob> FinishedJobs;
     FinishedJobs mFinishedJobs;
 };
 
