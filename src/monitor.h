@@ -41,6 +41,8 @@ class Monitor : public QObject
     ~Monitor();
 
     void setCurrentNet( const QByteArray & );
+    QByteArray currentNet () const;
+
     void setCurrentView( StatusView *, bool rememberJobs );
 
   protected:

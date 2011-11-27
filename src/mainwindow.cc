@@ -160,12 +160,17 @@ void MainWindow::readSettings()
         m_summaryView->setChecked(true);
     }
 
+    // "icecream" is the default netname used by iceccd
+    QByteArray netname = cfg.value("netname", "icecream").toByteArray();
+    setCurrentNet(netname);
+
     m_viewMode->blockSignals(false);
 }
 
 void MainWindow::writeSettings()
 {
   QSettings cfg;
+  cfg.setValue( "netname", m_monitor->currentNet() );
   cfg.setValue( "CurrentView", m_view->id() );
   cfg.setValue( "geometry", this->geometry() );
   cfg.sync();

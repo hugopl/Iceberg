@@ -340,6 +340,12 @@ void Monitor::setCurrentNet( const QByteArray &netName )
     m_current_netname = netName;
 }
 
+QByteArray Monitor::currentNet() const
+{
+    return m_current_netname;
+}
+
+
 void Monitor::setSchedulerState( bool online )
 {
     if (mSchedulerOnline == online) return;
