@@ -16,9 +16,8 @@ int main(int argc, char** argv)
     // Otherwise, use the netname stored in the config file
     QStringList args = app.arguments();
     int nIndex = args.indexOf("-n");
-    if ((nIndex != -1) && (nIndex < args.count() +1)) {
+    if ((nIndex != -1) && (nIndex < args.count() + 1))
         mainWidget->setCurrentNet(args[nIndex + 1].toLocal8Bit());
-    }
     mainWidget->show();
 
     return app.exec();
