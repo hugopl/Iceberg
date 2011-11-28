@@ -56,6 +56,7 @@ Monitor::~Monitor()
 void Monitor::checkScheduler(bool deleteit)
 {
     qDebug() << "checkScheduler " << deleteit << endl;
+    int delay = 0;
     if ( deleteit ) {
         m_rememberedJobs.clear();
         delete m_scheduler;
@@ -66,9 +67,10 @@ void Monitor::checkScheduler(bool deleteit)
         delete m_discover;
         m_discover = 0;
         setSchedulerState(false);
+        delay = 1000+(qrand() & 1023);
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 1000+(qrand() & 1023), this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( delay, this, SLOT( slotCheckScheduler() ) );
 }
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
