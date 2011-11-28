@@ -118,14 +118,6 @@ MainWindow::MainWindow( QWidget *parent )
     setWindowIcon( QIcon(":bigIcon.png") );
 
     readSettings();
-
-    QDesktopWidget w;
-    QRect screenGeometry = w.availableGeometry( this );
-    const QRect defaultRect = QRect( screenGeometry.center()/2, screenGeometry.size()/2 );
-
-    QSettings cfg;
-    QVariant geom = cfg.value( "geometry", defaultRect );
-    setGeometry( geom.toRect() );
 }
 
 MainWindow::~MainWindow()
@@ -163,6 +155,15 @@ void MainWindow::readSettings()
     // "icecream" is the default netname used by iceccd
     QByteArray netname = cfg.value("netname", "icecream").toByteArray();
     setCurrentNet(netname);
+
+    // Load window geometry
+    QRect geom = cfg.value( "geometry" ).toRect();
+    if (geom.isNull()) {
+        QDesktopWidget w;
+        QRect screenGeometry = w.availableGeometry( this );
+        geom = QRect( screenGeometry.center()/2, screenGeometry.size()/2 );
+    }
+    setGeometry( geom );
 
     m_viewMode->blockSignals(false);
 }
