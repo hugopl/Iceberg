@@ -38,9 +38,9 @@
 
 using namespace std;
 
-Monitor::Monitor( HostInfoManager *m, QObject *parent)
+Monitor::Monitor( HostInfoManager* m, QObject *parent)
     : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-      m_scheduler( 0 ), mSchedulerOnline( false ),
+      m_scheduler( 0 ), m_schedulerOnline( false ),
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
     qsrand(std::time(0));
@@ -90,8 +90,8 @@ void Monitor::slotCheckScheduler()
 
     list<string> names;
 
-    if ( !m_current_netname.isEmpty() )
-        names.push_front( m_current_netname.data() );
+    if ( !m_currentNetName.isEmpty() )
+        names.push_front( m_currentNetName.data() );
     else
         names.push_front("ICECREAM");
 
@@ -101,11 +101,11 @@ void Monitor::slotCheckScheduler()
     for ( list<string>::const_iterator it = names.begin(); it != names.end();
           ++it ) {
 
-        m_current_netname = it->c_str();
+        m_currentNetName = it->c_str();
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched ( m_current_netname.data() );
+            m_discover = new DiscoverSched ( m_currentNetName.data() );
         }
 
         m_scheduler = m_discover->try_get_scheduler ();
@@ -150,11 +150,11 @@ void Monitor::slotCheckScheduler()
 void Monitor::msgReceived()
 {
     while (!m_scheduler->read_a_bit() || m_scheduler->has_msg())
-        if (!handle_activity())
+        if (!handleActivity())
             break;
 }
 
-bool Monitor::handle_activity()
+bool Monitor::handleActivity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
@@ -166,26 +166,26 @@ bool Monitor::handle_activity()
 
     switch ( m->type ) {
     case M_MON_GET_CS:
-        handle_getcs( m );
+        handleGetcs( m );
         break;
     case M_MON_JOB_BEGIN:
-        handle_job_begin( m );
+        handleJobBegin( m );
         break;
     case M_MON_JOB_DONE:
-        handle_job_done( m );
+        handleJobDone( m );
         break;
     case M_END:
         std::cout << "END" << endl;
         checkScheduler( true );
         break;
     case M_MON_STATS:
-        handle_stats( m );
+        handleStats( m );
         break;
     case M_MON_LOCAL_JOB_BEGIN:
-        handle_local_begin( m );
+        handleLocalBegin( m );
         break;
     case M_JOB_LOCAL_DONE:
-        handle_local_done( m );
+        handleLocalDone( m );
         break;
     default:
         cout << "UNKNOWN" << endl;
@@ -195,7 +195,7 @@ bool Monitor::handle_activity()
     return true;
 }
 
-void Monitor::handle_getcs( Msg *_m )
+void Monitor::handleGetcs( Msg* _m )
 {
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
     if ( !m ) return;
@@ -206,7 +206,7 @@ void Monitor::handle_getcs( Msg *_m )
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
-void Monitor::handle_local_begin( Msg *_m )
+void Monitor::handleLocalBegin( Msg* _m )
 {
     MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
     if ( !m ) return;
@@ -218,7 +218,7 @@ void Monitor::handle_local_begin( Msg *_m )
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
-void Monitor::handle_local_done( Msg *_m )
+void Monitor::handleLocalDone( Msg* _m )
 {
     JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
     if ( !m ) return;
@@ -240,7 +240,7 @@ void Monitor::handle_local_done( Msg *_m )
     }
 }
 
-void Monitor::handle_stats( Msg *_m )
+void Monitor::handleStats( Msg* _m )
 {
     MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
     if ( !m ) return;
@@ -265,7 +265,7 @@ void Monitor::handle_stats( Msg *_m )
     }
 }
 
-void Monitor::handle_job_begin( Msg *_m )
+void Monitor::handleJobBegin( Msg* _m )
 {
     MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
     if ( !m ) return;
@@ -288,7 +288,7 @@ void Monitor::handle_job_begin( Msg *_m )
     m_view->update( *it );
 }
 
-void Monitor::handle_job_done( Msg *_m )
+void Monitor::handleJobDone( Msg* _m )
 {
     MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
     if ( !m ) return;
@@ -323,11 +323,11 @@ void Monitor::handle_job_done( Msg *_m )
     m_view->update( *it );
 }
 
-void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
+void Monitor::setCurrentView( StatusView* view, bool rememberJobs )
 {
     m_view = view;
 
-    m_view->updateSchedulerState( mSchedulerOnline );
+    m_view->updateSchedulerState( m_schedulerOnline );
 
     if ( rememberJobs ) {
         JobList::ConstIterator it = m_rememberedJobs.constBegin();
@@ -336,21 +336,21 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
     }
 }
 
-void Monitor::setCurrentNet( const QByteArray &netName )
+void Monitor::setCurrentNet( const QByteArray& netName )
 {
-    m_current_netname = netName;
+    m_currentNetName = netName;
 }
 
 QByteArray Monitor::currentNet() const
 {
-    return m_current_netname;
+    return m_currentNetName;
 }
 
 
 void Monitor::setSchedulerState( bool online )
 {
-    if (mSchedulerOnline == online) return;
-    mSchedulerOnline = online;
+    if (m_schedulerOnline == online) return;
+    m_schedulerOnline = online;
     m_view->updateSchedulerState( online );
 }
 

@@ -37,13 +37,13 @@ class Monitor : public QObject
 {
     Q_OBJECT
   public:
-    Monitor( HostInfoManager *, QObject *parent);
+    Monitor( HostInfoManager*, QObject* parent);
     ~Monitor();
 
-    void setCurrentNet( const QByteArray & );
+    void setCurrentNet( const QByteArray& );
     QByteArray currentNet () const;
 
-    void setCurrentView( StatusView *, bool rememberJobs );
+    void setCurrentView( StatusView*, bool rememberJobs );
     void checkScheduler(bool deleteit = false);
 
   protected:
@@ -55,23 +55,23 @@ class Monitor : public QObject
 
   private:
     void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
-    bool handle_activity();
-    void handle_getcs( Msg *m );
-    void handle_job_begin( Msg *m );
-    void handle_job_done( Msg *m );
-    void handle_stats( Msg *m );
-    void handle_local_begin( Msg *m );
-    void handle_local_done( Msg *m );
+    bool handleActivity();
+    void handleGetcs( Msg* m );
+    void handleJobBegin( Msg* m );
+    void handleJobDone( Msg* m );
+    void handleStats( Msg* m );
+    void handleLocalBegin( Msg* m );
+    void handleLocalDone( Msg* m );
 
-    HostInfoManager *m_hostInfoManager;
-    StatusView *m_view;
+    HostInfoManager* m_hostInfoManager;
+    StatusView* m_view;
     JobList m_rememberedJobs;
-    MsgChannel *m_scheduler;
-    QByteArray m_current_netname;
-    bool mSchedulerOnline;
+    MsgChannel* m_scheduler;
+    QByteArray m_currentNetName;
+    bool m_schedulerOnline;
 
-    DiscoverSched *m_discover;
-    QSocketNotifier *m_fd_notify;
+    DiscoverSched* m_discover;
+    QSocketNotifier* m_fd_notify;
     QSocketNotifier::Type m_fd_type;
 
 };
