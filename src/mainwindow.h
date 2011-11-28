@@ -31,6 +31,7 @@ class Monitor;
 class StatusView;
 class QActionGroup;
 class QMenu;
+class QCloseEvent;
 
 class MainWindow : public QMainWindow
 {
@@ -40,6 +41,9 @@ class MainWindow : public QMainWindow
     ~MainWindow();
 
     void setCurrentNet( const QByteArray & );
+
+  protected:
+    void closeEvent( QCloseEvent * event );
 
   private slots:
     void setupListView();

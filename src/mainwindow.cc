@@ -36,6 +36,8 @@
 #include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QDesktopWidget>
+#include <QCloseEvent>
 
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
@@ -113,15 +115,21 @@ MainWindow::MainWindow( QWidget *parent )
                 this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
     }
 
-    setWindowIcon(QIcon(":bigIcon.png"));
+    setWindowIcon( QIcon(":bigIcon.png") );
 
     readSettings();
+
+    QDesktopWidget w;
+    QRect screenGeometry = w.availableGeometry( this );
+    const QRect defaultRect = QRect( screenGeometry.center()/2, screenGeometry.size()/2 );
+
+    QSettings cfg;
+    QVariant geom = cfg.value( "geometry", defaultRect );
+    setGeometry( geom.toRect() );
 }
 
 MainWindow::~MainWindow()
 {
-  writeSettings();
-
   delete m_hostInfoManager;
 }
 
@@ -152,13 +160,20 @@ void MainWindow::readSettings()
         m_summaryView->setChecked(true);
     }
 
+    // "icecream" is the default netname used by iceccd
+    QByteArray netname = cfg.value("netname", "icecream").toByteArray();
+    setCurrentNet(netname);
+
     m_viewMode->blockSignals(false);
 }
 
 void MainWindow::writeSettings()
 {
   QSettings cfg;
+  cfg.setValue( "netname", m_monitor->currentNet() );
   cfg.setValue( "CurrentView", m_view->id() );
+  cfg.setValue( "geometry", this->geometry() );
+  cfg.sync();
 }
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
@@ -266,6 +281,11 @@ void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reas
      default:
          ;
      }
+}
+
+void MainWindow::closeEvent( QCloseEvent * event )
+{
+    writeSettings();
 }
 
 #include "mainwindow.moc"
