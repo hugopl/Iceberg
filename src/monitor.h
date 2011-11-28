@@ -44,6 +44,7 @@ class Monitor : public QObject
     QByteArray currentNet () const;
 
     void setCurrentView( StatusView *, bool rememberJobs );
+    void checkScheduler(bool deleteit = false);
 
   protected:
     void setSchedulerState( bool );
@@ -53,7 +54,6 @@ class Monitor : public QObject
     void msgReceived();
 
   private:
-    void checkScheduler(bool deleteit = false);
     void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
     bool handle_activity();
     void handle_getcs( Msg *m );

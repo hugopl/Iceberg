@@ -118,6 +118,7 @@ MainWindow::MainWindow( QWidget *parent )
     setWindowIcon( QIcon(":bigIcon.png") );
 
     readSettings();
+    m_monitor->checkScheduler();
 }
 
 MainWindow::~MainWindow()
@@ -153,8 +154,11 @@ void MainWindow::readSettings()
     }
 
     // "icecream" is the default netname used by iceccd
-    QByteArray netname = cfg.value("netname", "icecream").toByteArray();
-    setCurrentNet(netname);
+    if (m_monitor->currentNet().isEmpty()) {
+        QByteArray netname = cfg.value("netname", "icecream").toByteArray();
+        setCurrentNet(netname);
+    }
+
 
     // Load window geometry
     QRect geom = cfg.value( "geometry" ).toRect();

@@ -43,7 +43,6 @@ Monitor::Monitor( HostInfoManager *m, QObject *parent)
       m_scheduler( 0 ), mSchedulerOnline( false ),
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
-    checkScheduler();
     qsrand(std::time(0));
 }
 
