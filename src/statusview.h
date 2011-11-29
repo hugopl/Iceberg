@@ -47,6 +47,7 @@ class StatusView
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}
+    virtual bool isConfigurable() { return false; }
     virtual void configureView() {}
 
     virtual QString id() const = 0;

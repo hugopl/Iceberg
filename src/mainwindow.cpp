@@ -76,8 +76,8 @@ MainWindow::MainWindow(QWidget* parent)
     QAction* actionCheckNodes = viewMenu->addAction(tr("Check Nodes"));
     connect( actionCheckNodes, SIGNAL(triggered()), this, SLOT(checkNodes()));
     viewMenu->addSeparator();
-    QAction* actionConfigView = viewMenu->addAction( tr("Configure View...") );
-    connect( actionConfigView, SIGNAL(triggered()), this, SLOT( configureView()));
+    m_configView = viewMenu->addAction(tr("Configure View..."));
+    connect(m_configView, SIGNAL(triggered()), this, SLOT( configureView()));
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
@@ -161,6 +161,7 @@ void MainWindow::setupView(StatusView* view, bool rememberJobs)
   m_monitor->setCurrentView(m_view, rememberJobs);
   setCentralWidget(m_view->widget());
   m_view->widget()->show();
+  m_configView->setEnabled(m_view->isConfigurable());
 }
 
 void MainWindow::setupListView()
@@ -171,13 +172,11 @@ void MainWindow::setupListView()
 void MainWindow::setupStarView()
 {
     setupView(new StarView( m_hostInfoManager, this), false);
-    m_starView->setChecked(true);
 }
 
 void MainWindow::setupDetailedHostView()
 {
     setupView(new DetailedHostView(m_hostInfoManager, this), false);
-    m_detailedView->setChecked(true);
 }
 
 void MainWindow::stopView()

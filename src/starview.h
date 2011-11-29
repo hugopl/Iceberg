@@ -154,6 +154,8 @@ public:
 
     void updateSchedulerState( bool online );
 
+    bool isConfigurable() { return true; }
+
     void configureView();
 
 protected:

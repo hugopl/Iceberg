@@ -81,6 +81,7 @@ private:
     QAction* m_listView;
     QAction* m_starView;
     QAction* m_detailedView;
+    QAction* m_configView;
     QSystemTrayIcon* systemTrayIcon;
     QMenu* systemTrayMenu;
 };
