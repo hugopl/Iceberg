@@ -22,19 +22,19 @@
 */
 
 #include "mainwindow.h"
+#include <QCloseEvent>
+#include <QDesktopWidget>
+#include <QDialogButtonBox>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
+#include <QVBoxLayout>
 #include "detailedhostview.h"
 #include "hostinfo.h"
 #include "listview.h"
 #include "monitor.h"
 #include "starview.h"
 #include "version.h"
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QDesktopWidget>
-#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), m_view(0)
@@ -147,21 +147,21 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-  QSettings cfg;
-  cfg.setValue("netname", m_monitor->currentNet());
-  cfg.setValue("CurrentView", m_view->id());
-  cfg.setValue("geometry", this->geometry());
-  cfg.sync();
+    QSettings cfg;
+    cfg.setValue("netname", m_monitor->currentNet());
+    cfg.setValue("CurrentView", m_view->id());
+    cfg.setValue("geometry", this->geometry());
+    cfg.sync();
 }
 
 void MainWindow::setupView(StatusView* view, bool rememberJobs)
 {
-  delete m_view;
-  m_view = view;
-  m_monitor->setCurrentView(m_view, rememberJobs);
-  setCentralWidget(m_view->widget());
-  m_view->widget()->show();
-  m_configView->setEnabled(m_view->isConfigurable());
+    delete m_view;
+    m_view = view;
+    m_monitor->setCurrentView(m_view, rememberJobs);
+    setCentralWidget(m_view->widget());
+    m_view->widget()->show();
+    m_configView->setEnabled(m_view->isConfigurable());
 }
 
 void MainWindow::setupListView()
