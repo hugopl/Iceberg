@@ -23,8 +23,8 @@
 #include <assert.h>
 #include <QDebug>
 
-QVector<QColor> HostInfo::mColorTable;
-QMap<int,QString> HostInfo::mColorNameMap;
+QVector<QColor> HostInfo::m_colorTable;
+QMap<int,QString> HostInfo::m_colorNameMap;
 
 void HostInfo::initColorTable()
 {
@@ -58,97 +58,96 @@ void HostInfo::initColorTable()
     // initColor( "#C2C032", tr("pumpkin" ) );
 }
 
-void HostInfo::initColor( const QString &value , const QString &name )
+void HostInfo::initColor(const QString& value, const QString& name)
 {
-    QColor c( value );
-    mColorTable.append( c );
+    QColor c(value);
+    m_colorTable.append(c);
 
-    mColorNameMap.insert( c.red() + c.green() * 256 + c.blue() * 65536, name );
+    m_colorNameMap.insert(c.red() + c.green() * 256 + c.blue() * 65536, name);
 }
 
-QString HostInfo::colorName( const QColor &c )
+QString HostInfo::colorName(const QColor& color)
 {
-  int key = c.red() + c.green() * 256 + c.blue() * 65536;
+    int key = color.red() + color.green() * 256 + color.blue() * 65536;
 
-  return mColorNameMap.value( key, tr("<unknown>") );
+    return m_colorNameMap.value(key, tr("<unknown>"));
 }
 
-HostInfo::HostInfo( unsigned int id )
-  : mId( id )
+HostInfo::HostInfo(unsigned int id) : m_id( id )
 {
 }
 
 unsigned int HostInfo::id() const
 {
-  return mId;
+    return m_id;
 }
 
 QColor HostInfo::color() const
 {
-  return mColor;
+    return m_color;
 }
 
 QString HostInfo::name() const
 {
-  return mName;
+    return m_name;
 }
 
 QString HostInfo::ip() const
 {
-  return mIp;
+    return m_ip;
 }
 
 QString HostInfo::platform() const
 {
-    return mPlatform;
+    return m_platform;
 }
 
 unsigned int HostInfo::maxJobs() const
 {
-  return mMaxJobs;
+    return m_maxJobs;
 }
 
 bool HostInfo::isOffline() const
 {
-  return mOffline;
+    return m_offline;
 }
 
 float HostInfo::serverSpeed() const
 {
-    return mServerSpeed;
+    return m_serverSpeed;
 }
 
 unsigned int HostInfo::serverLoad() const
 {
-    return mServerLoad;
+    return m_serverLoad;
 }
 
-void HostInfo::updateFromStatsMap( const StatsMap &stats )
+void HostInfo::updateFromStatsMap(const StatsMap& stats)
 {
-  const QString& name = stats["Name"];
+    const QString& name = stats["Name"];
 
-  if ( name != mName ) {
-    mName = name;
-    mColor = createColor( mName );
-    mIp = stats["IP"];
-    mPlatform = stats["Platform"];
-  }
+    if (name != m_name) {
+        m_name = name;
+        m_color = createColor(m_name);
+        m_ip = stats["IP"];
+        m_platform = stats["Platform"];
+    }
 
-  mMaxJobs = stats["MaxJobs"].toUInt();
-  mOffline = ( stats["State"] == "Offline" );
+    m_maxJobs = stats["MaxJobs"].toUInt();
+    m_offline = ( stats["State"] == "Offline" );
 
-  mServerSpeed = stats["Speed"].toFloat();
+    m_serverSpeed = stats["Speed"].toFloat();
 
-  mServerLoad = stats["Load"].toUInt();
+    m_serverLoad = stats["Load"].toUInt();
 }
 
-QColor HostInfo::createColor( const QString &name )
+QColor HostInfo::createColor(const QString& name)
 {
     unsigned long h = 0;
     unsigned long g;
     int ch;
 
-    for( uint i = 0; i < (uint)name.length(); ++i ) {
+    for(uint i = 0; i < (uint)name.length(); ++i) {
         ch = name[i].unicode();
         h = (h << 4) + ch;
         if ((g = (h & 0xf0000000)) != 0)
@@ -158,81 +157,82 @@ QColor HostInfo::createColor( const QString &name )
         }
     }
 
-    h += name.length() + ( name.length() << 17 );
+    h += name.length() + (name.length() << 17);
     h ^= h >> 2;
 
-    return mColorTable[ h % mColorTable.count() ];
+    return m_colorTable[h % m_colorTable.count()];
 }
 
 QColor HostInfo::createColor()
 {
-  static int num = 0;
+    static int num = 0;
 
-  return mColorTable.at( num++ % mColorTable.count() );
+    return m_colorTable.at( num++ % m_colorTable.count() );
 }
 
 HostInfoManager::HostInfoManager()
 {
-  HostInfo::initColorTable();
+    HostInfo::initColorTable();
 }
 
 HostInfoManager::~HostInfoManager()
 {
-  qDeleteAll(mHostMap);
+    qDeleteAll(m_hostMap);
 }
 
-HostInfo *HostInfoManager::find( unsigned int hostid ) const
+HostInfo* HostInfoManager::find(unsigned int hostid) const
 {
-  return mHostMap.value( hostid, 0 );
+    return m_hostMap.value(hostid, 0);
 }
 
-HostInfo *HostInfoManager::checkNode( unsigned int hostid,
-                                      const HostInfo::StatsMap &stats )
+HostInfo* HostInfoManager::checkNode(unsigned int hostid, const HostInfo::StatsMap& stats)
 {
-  HostMap::ConstIterator it = mHostMap.constFind( hostid );
-  HostInfo *hostInfo;
-  if ( it == mHostMap.constEnd() ) {
-    hostInfo = new HostInfo( hostid );
-    mHostMap.insert( hostid, hostInfo );
-  } else {
-    hostInfo = *it;
-  }
-
-  hostInfo->updateFromStatsMap( stats );
-
-  return hostInfo;
-}
-
-QString HostInfoManager::nameForHost( unsigned int id ) const
-{
-  HostInfo *hostInfo = find( id );
-  if ( hostInfo ) return hostInfo->name();
-
-  return tr("<unknown>");
-}
-
-QColor HostInfoManager::hostColor( unsigned int id ) const
-{
-  if ( id ) {
-    HostInfo *hostInfo = find( id );
-    if ( hostInfo ) {
-        QColor tmp = hostInfo->color();
-        assert( tmp.isValid() && ( tmp.red() + tmp.green() + tmp.blue() ));
-        return tmp;
+    HostMap::ConstIterator it = m_hostMap.constFind( hostid );
+    HostInfo* hostInfo;
+    if (it == m_hostMap.constEnd()) {
+        hostInfo = new HostInfo(hostid);
+        m_hostMap.insert(hostid, hostInfo);
+    } else {
+        hostInfo = *it;
     }
-  }
 
-  qWarning() << "id " << id << " got no color\n";
-  assert( false );
+    hostInfo->updateFromStatsMap(stats);
 
-  return QColor( 0, 0, 0 );
+    return hostInfo;
 }
 
-unsigned int HostInfoManager::maxJobs( unsigned int id ) const
+QString HostInfoManager::nameForHost(unsigned int id) const
 {
-  if ( id ) {
-    HostInfo *hostInfo = find( id );
-    if ( hostInfo ) return hostInfo->maxJobs();
+    HostInfo* hostInfo = find(id);
+    if (hostInfo)
+        return hostInfo->name();
+
+    return tr("<unknown>");
+}
+
+QColor HostInfoManager::hostColor(unsigned int id) const
+{
+    if (id) {
+        HostInfo* hostInfo = find(id);
+        if (hostInfo) {
+            QColor tmp = hostInfo->color();
+            assert(tmp.isValid() && (tmp.red() + tmp.green() + tmp.blue()));
+            return tmp;
+        }
+    }
+
+    qWarning() << "id " << id << " got no color\n";
+    assert( false );
+
+    return QColor(0, 0, 0);
+}
+
+unsigned int HostInfoManager::maxJobs(unsigned int id) const
+{
+  if (id) {
+    HostInfo* hostInfo = find(id);
+    if (hostInfo)
+        return hostInfo->maxJobs();
   }
 
   return 0;
@@ -240,16 +240,16 @@ unsigned int HostInfoManager::maxJobs( unsigned int id ) const
 
 HostInfoManager::HostMap HostInfoManager::hostMap() const
 {
-  return mHostMap;
+  return m_hostMap;
 }
 
-void HostInfoManager::setSchedulerName( const QString& schedulerName )
+void HostInfoManager::setSchedulerName(const QString& schedulerName)
 {
-    mSchedulerName = schedulerName;
+    m_schedulerName = schedulerName;
 }
 
-void HostInfoManager::setNetworkName( const QString& networkName )
+void HostInfoManager::setNetworkName(const QString& networkName)
 {
-    mNetworkName = networkName;
+    m_networkName = networkName;
 }
 

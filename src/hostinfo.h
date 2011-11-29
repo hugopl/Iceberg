@@ -31,7 +31,7 @@ class HostInfo
 {
     Q_DECLARE_TR_FUNCTIONS(HostInfo)
 public:
-    HostInfo( unsigned int id );
+    HostInfo(unsigned int id);
 
     unsigned int id() const;
 
@@ -45,38 +45,38 @@ public:
     bool isOffline() const;
 
     typedef QMap<QString,QString> StatsMap;
-    void updateFromStatsMap( const StatsMap &stats );
+    void updateFromStatsMap(const StatsMap& stats);
 
     static void initColorTable();
-    static QString colorName( const QColor & );
+    static QString colorName(const QColor& color);
 
     float serverSpeed() const;
 
     unsigned int serverLoad() const;
 
 protected:
-    static void initColor( const QString &value, const QString &name );
+    static void initColor(const QString& value, const QString& name);
 
     QColor createColor();
-    QColor createColor( const QString &name );
+    QColor createColor(const QString& name);
 
 private:
-    unsigned int mId;
-    QString mName;
-    QColor mColor;
-    QString mPlatform;
+    unsigned int m_id;
+    QString m_name;
+    QColor m_color;
+    QString m_platform;
 
-    QString mIp;
+    QString m_ip;
 
-    unsigned int mMaxJobs;
-    bool mOffline;
+    unsigned int m_maxJobs;
+    bool m_offline;
 
-    float mServerSpeed;
+    float m_serverSpeed;
 
-    unsigned int mServerLoad;
+    unsigned int m_serverLoad;
 
-    static QVector<QColor> mColorTable;
-    static QMap<int,QString> mColorNameMap;
+    static QVector<QColor> m_colorTable;
+    static QMap<int,QString> m_colorNameMap;
 };
 
 class HostInfoManager
@@ -86,28 +86,27 @@ public:
     HostInfoManager();
     ~HostInfoManager();
 
-    HostInfo *find( unsigned int hostid ) const;
+    HostInfo* find(unsigned int hostid) const;
 
-    typedef QMap<unsigned int,HostInfo *> HostMap;
+    typedef QMap<unsigned int,HostInfo*> HostMap;
 
     HostMap hostMap() const;
 
-    HostInfo *checkNode( unsigned int hostid,
-                        const HostInfo::StatsMap &statmsg );
+    HostInfo* checkNode(unsigned int hostid, const HostInfo::StatsMap& statmsg);
 
-    QString nameForHost( unsigned int id ) const;
-    QColor hostColor( unsigned int id ) const;
-    unsigned int maxJobs( unsigned int id ) const;
+    QString nameForHost(unsigned int id) const;
+    QColor hostColor(unsigned int id) const;
+    unsigned int maxJobs(unsigned int id) const;
 
-    QString schedulerName() const { return mSchedulerName; }
-    void setSchedulerName( const QString& schedulerName );
-    QString networkName() const { return mNetworkName; }
-    void setNetworkName( const QString& networkName );
+    QString schedulerName() const { return m_schedulerName; }
+    void setSchedulerName(const QString& schedulerName);
+    QString networkName() const { return m_networkName; }
+    void setNetworkName(const QString& networkName);
 
 private:
-    HostMap mHostMap;
-    QString mSchedulerName;
-    QString mNetworkName;
+    HostMap m_hostMap;
+    QString m_schedulerName;
+    QString m_networkName;
 };
 
 #endif

@@ -22,13 +22,10 @@
 
 
 #include "statusview.h"
-
 #include <QWidget>
-
 
 class HostListView;
 class JobListView;
-
 
 class DetailedHostView : public QWidget, public StatusView
 {
@@ -36,19 +33,19 @@ class DetailedHostView : public QWidget, public StatusView
 
 public:
 
-    DetailedHostView( HostInfoManager* manager, QWidget *parent );
+    DetailedHostView(HostInfoManager* manager, QWidget* parent);
 
-    void update( const Job &job );
+    void update(const Job& job);
 
     QWidget* widget();
 
     QString id() const { return "detailedhost"; }
 
-    void checkNode( unsigned int hostid );
+    void checkNode(unsigned int hostid);
 
-    void removeNode( unsigned int hostid );
+    void removeNode(unsigned int hostid);
 
-    void updateSchedulerState( bool online );
+    void updateSchedulerState(bool online);
 
 private slots:
 

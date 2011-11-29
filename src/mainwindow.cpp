@@ -36,68 +36,68 @@
 #include <QDesktopWidget>
 #include <QCloseEvent>
 
-MainWindow::MainWindow( QWidget *parent )
-  : QMainWindow( parent ), m_view( 0 )
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), m_view(0)
 {
     m_hostInfoManager = new HostInfoManager;
 
-    m_monitor = new Monitor( m_hostInfoManager, this );
+    m_monitor = new Monitor(m_hostInfoManager, this);
 
     m_viewMode = new QActionGroup(this);
 
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QAction* quitAction = fileMenu->addAction(tr("&Quit"));
-    connect(quitAction, SIGNAL( triggered() ), this, SLOT( close() ));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* modeMenu = viewMenu->addMenu(tr("&Mode"));
 
-    m_listView = modeMenu->addAction(tr( "&List View" ));
+    m_listView = modeMenu->addAction(tr("&List View"));
     m_listView->setCheckable(true);
     m_viewMode->addAction(m_listView);
-    connect( m_listView, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
+    connect( m_listView, SIGNAL(triggered()), this, SLOT(setupListView()));
 
-    m_starView = modeMenu->addAction(tr( "&Star View" ));
+    m_starView = modeMenu->addAction(tr("&Star View"));
     m_starView->setCheckable(true);
     m_viewMode->addAction(m_starView);
-    connect( m_starView, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
+    connect( m_starView, SIGNAL(triggered()), this, SLOT(setupStarView()));
 
-    m_detailedView = modeMenu->addAction(tr( "&Detailed Host View" ));
+    m_detailedView = modeMenu->addAction(tr("&Detailed Host View"));
     m_detailedView->setCheckable(true);
     m_viewMode->addAction(m_detailedView);
-    connect( m_detailedView, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
+    connect( m_detailedView, SIGNAL(triggered()), this, SLOT(setupDetailedHostView()));
 
 
-    QAction* actionStart = viewMenu->addAction( tr("&Start") );
-    connect( actionStart, SIGNAL( triggered() ), this, SLOT( startView() ) );
-    QAction* actionStop = viewMenu->addAction( tr("Stop") );
-    connect( actionStop, SIGNAL( triggered() ), this, SLOT( stopView() ) );
+    QAction* actionStart = viewMenu->addAction(tr("&Start"));
+    connect( actionStart, SIGNAL(triggered()), this, SLOT(startView()));
+    QAction* actionStop = viewMenu->addAction(tr("Stop"));
+    connect( actionStop, SIGNAL(triggered()), this, SLOT(stopView()));
     viewMenu->addSeparator();
-    QAction* actionCheckNodes = viewMenu->addAction( tr("Check Nodes") );
-    connect( actionCheckNodes, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
+    QAction* actionCheckNodes = viewMenu->addAction(tr("Check Nodes"));
+    connect( actionCheckNodes, SIGNAL(triggered()), this, SLOT(checkNodes()));
     viewMenu->addSeparator();
     QAction* actionConfigView = viewMenu->addAction( tr("Configure View...") );
-    connect( actionConfigView, SIGNAL( triggered() ), this, SLOT( configureView() ) );
+    connect( actionConfigView, SIGNAL(triggered()), this, SLOT( configureView()));
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
 
     // Avoid useless creation and connection if the system does not have a systray
-    if ( QSystemTrayIcon::isSystemTrayAvailable() ) {
-        systemTrayIcon = new QSystemTrayIcon( this );
-        systemTrayIcon->setIcon( QIcon( ":bigIcon.png" ) );
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        systemTrayIcon = new QSystemTrayIcon(this);
+        systemTrayIcon->setIcon(QIcon(":bigIcon.png"));
         systemTrayIcon->show();
 
-        systemTrayMenu = new QMenu( this );
-        systemTrayMenu->addAction( quitAction );
+        systemTrayMenu = new QMenu(this);
+        systemTrayMenu->addAction(quitAction);
 
-        systemTrayIcon->setContextMenu( systemTrayMenu );
+        systemTrayIcon->setContextMenu(systemTrayMenu);
 
-        connect( systemTrayIcon, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ),
-                this, SLOT( systemTrayIconActivated( QSystemTrayIcon::ActivationReason ) ) );
+        connect(systemTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+                this, SLOT(systemTrayIconActivated(QSystemTrayIcon::ActivationReason)));
     }
 
-    setWindowIcon( QIcon(":bigIcon.png") );
+    setWindowIcon(QIcon(":bigIcon.png"));
 
     readSettings();
     m_monitor->checkScheduler();
@@ -105,7 +105,7 @@ MainWindow::MainWindow( QWidget *parent )
 
 MainWindow::~MainWindow()
 {
-  delete m_hostInfoManager;
+    delete m_hostInfoManager;
 }
 
 void MainWindow::readSettings()
@@ -148,61 +148,61 @@ void MainWindow::readSettings()
 void MainWindow::writeSettings()
 {
   QSettings cfg;
-  cfg.setValue( "netname", m_monitor->currentNet() );
-  cfg.setValue( "CurrentView", m_view->id() );
-  cfg.setValue( "geometry", this->geometry() );
+  cfg.setValue("netname", m_monitor->currentNet());
+  cfg.setValue("CurrentView", m_view->id());
+  cfg.setValue("geometry", this->geometry());
   cfg.sync();
 }
 
-void MainWindow::setupView( StatusView *view, bool rememberJobs )
+void MainWindow::setupView(StatusView* view, bool rememberJobs)
 {
   delete m_view;
   m_view = view;
-  m_monitor->setCurrentView( m_view, rememberJobs );
-  setCentralWidget( m_view->widget() );
+  m_monitor->setCurrentView(m_view, rememberJobs);
+  setCentralWidget(m_view->widget());
   m_view->widget()->show();
 }
 
 void MainWindow::setupListView()
 {
-    setupView( new ListStatusView( m_hostInfoManager, this ), true );
+    setupView(new ListStatusView(m_hostInfoManager, this), true);
 }
 
 void MainWindow::setupStarView()
 {
-    setupView( new StarView( m_hostInfoManager, this ), false );
+    setupView(new StarView( m_hostInfoManager, this), false);
     m_starView->setChecked(true);
 }
 
 void MainWindow::setupDetailedHostView()
 {
-    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
+    setupView(new DetailedHostView(m_hostInfoManager, this), false);
     m_detailedView->setChecked(true);
 }
 
 void MainWindow::stopView()
 {
-  m_view->stop();
+    m_view->stop();
 }
 
 void MainWindow::startView()
 {
-  m_view->start();
+    m_view->start();
 }
 
 void MainWindow::checkNodes()
 {
-  m_view->checkNodes();
+    m_view->checkNodes();
 }
 
 void MainWindow::configureView()
 {
-  m_view->configureView();
+    m_view->configureView();
 }
 
-void MainWindow::setCurrentNet( const QByteArray &netName )
+void MainWindow::setCurrentNet(const QByteArray& netName)
 {
-  m_monitor->setCurrentNet( netName );
+    m_monitor->setCurrentNet(netName);
 }
 
 void MainWindow::showAboutDialog()
@@ -229,21 +229,21 @@ void MainWindow::showAboutDialog()
     dlg.exec();
 }
 
-void MainWindow::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason )
+void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch ( reason ) {
-     case QSystemTrayIcon::Trigger:
-        isVisible() ? hide() : showNormal();
-        break;
-     case QSystemTrayIcon::Context:
-        systemTrayMenu->show();
-        break;
-     default:
-         ;
+        case QSystemTrayIcon::Trigger:
+            isVisible() ? hide() : showNormal();
+            break;
+        case QSystemTrayIcon::Context:
+            systemTrayMenu->show();
+            break;
+        default:
+            ;
      }
 }
 
-void MainWindow::closeEvent( QCloseEvent * event )
+void MainWindow::closeEvent(QCloseEvent* event)
 {
     writeSettings();
 }

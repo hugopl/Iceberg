@@ -20,8 +20,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef MON_KDE_H
-#define MON_KDE_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -36,16 +36,16 @@ class QCloseEvent;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-  public:
-    MainWindow( QWidget *parent );
+public:
+    MainWindow(QWidget* parent);
     ~MainWindow();
 
-    void setCurrentNet( const QByteArray & );
+    void setCurrentNet(const QByteArray& netName);
 
-  protected:
-    void closeEvent( QCloseEvent * event );
+protected:
+    void closeEvent(QCloseEvent* event);
 
-  private slots:
+private slots:
     void setupListView();
     void setupStarView();
     void setupDetailedHostView();
@@ -56,25 +56,25 @@ class MainWindow : public QMainWindow
     void configureView();
     void showAboutDialog();
 
-    void systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason );
+    void systemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 
-  private:
+private:
     void readSettings();
     void writeSettings();
 
-    void setupView( StatusView *view, bool rememberJobs );
+    void setupView(StatusView* view, bool rememberJobs);
 
-    HostInfoManager *m_hostInfoManager;
-    Monitor *m_monitor;
-    StatusView *m_view;
+    HostInfoManager* m_hostInfoManager;
+    Monitor* m_monitor;
+    StatusView* m_view;
 
     enum views {
-      ListViewType,
-      StarViewType,
-      PoolViewType,
-      GanttViewType,
-      SummaryViewType,
-      DetailedHostViewType
+        ListViewType,
+        StarViewType,
+        PoolViewType,
+        GanttViewType,
+        SummaryViewType,
+        DetailedHostViewType
     };
 
     QActionGroup* m_viewMode;
@@ -85,5 +85,4 @@ class MainWindow : public QMainWindow
     QMenu* systemTrayMenu;
 };
 
-#endif // MON_KDE_H
-// vim:ts=4:sw=4:et
+#endif // MAINWINDOW_H
