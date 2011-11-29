@@ -1,16 +1,16 @@
 iceberg = Executable:new("iceberg")
 iceberg:addFiles([[
-job.cc
+job.cpp
 main.cpp
-monitor.cc
-mainwindow.cc
-hostinfo.cc
-statusview.cc
-detailedhostview.cc
-hostlistview.cc
-joblistview.cc
-listview.cc
-starview.cc
+monitor.cpp
+mainwindow.cpp
+hostinfo.cpp
+statusview.cpp
+detailedhostview.cpp
+hostlistview.cpp
+joblistview.cpp
+listview.cpp
+starview.cpp
 ]])
 
 iceberg:addQtResource("icons.qrc")

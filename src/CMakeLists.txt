@@ -12,16 +12,16 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 
 set(iceberg_SRCS
   main.cpp
-  job.cc
-  monitor.cc
-  mainwindow.cc
-  hostinfo.cc
-  statusview.cc
-  detailedhostview.cc
-  hostlistview.cc
-  joblistview.cc
-  listview.cc
-  starview.cc
+  job.cpp
+  monitor.cpp
+  mainwindow.cpp
+  hostinfo.cpp
+  statusview.cpp
+  detailedhostview.cpp
+  hostlistview.cpp
+  joblistview.cpp
+  listview.cpp
+  starview.cpp
 )
 
 qt4_automoc(${iceberg_SRCS})
