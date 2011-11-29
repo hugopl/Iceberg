@@ -21,6 +21,7 @@
 
 #include "hostinfo.h"
 #include <assert.h>
+#include <QDebug>
 
 QVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;
@@ -124,15 +125,7 @@ unsigned int HostInfo::serverLoad() const
 
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
-#if 0
-  qDebug() << "HostInfo::updateFromStatsMap():" << endl;
-  StatsMap::ConstIterator it;
-  for( it = stats.begin(); it != stats.end(); it++ ) {
-    qDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
-  }
-#endif
-
-  QString name = stats["Name"];
+  const QString& name = stats["Name"];
 
   if ( name != mName ) {
     mName = name;
@@ -168,8 +161,6 @@ QColor HostInfo::createColor( const QString &name )
     h += name.length() + ( name.length() << 17 );
     h ^= h >> 2;
 
-    // qDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
-
     return mColorTable[ h % mColorTable.count() ];
 }
 
@@ -178,15 +169,6 @@ QColor HostInfo::createColor()
   static int num = 0;
 
   return mColorTable.at( num++ % mColorTable.count() );
-
-#if 0
-  QColor color( num, 255 - num, ( num * 3 ) % 255 );
-
-  num += 48;
-  num %= 255;
-
-  return color;
-#endif
 }
 
 HostInfoManager::HostInfoManager()
@@ -240,7 +222,7 @@ QColor HostInfoManager::hostColor( unsigned int id ) const
     }
   }
 
-  //qDebug() << "id " << id << " got no color\n";
+  qWarning() << "id " << id << " got no color\n";
   assert( false );
 
   return QColor( 0, 0, 0 );

@@ -47,7 +47,7 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
 {
     setContentsMargins(10, 10, 10, 10);
     QBoxLayout *topLayout = new QVBoxLayout( this );
-    topLayout->setMargin( 0 );
+    topLayout->setContentsMargins(0, 0, 0, 0);
 
     QLabel *label = new QLabel( tr("Number of nodes per ring:"), this );
     topLayout->addWidget( label );
@@ -290,21 +290,14 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
 
 void StarView::update( const Job &job )
 {
-#if 0
-    qDebug() << "StarView::update() " << job.jobId()
-             << " server: " << job.server() << " client: " << job.client()
-             << " state: " << job.stateAsString() << endl;
-#endif
     if (job.state() == Job::WaitingForCS) {
         drawNodeStatus();
         return;
     }
 
     unsigned int hostid = processor( job );
-    if ( !hostid ) {
-        qDebug() << "Empty host" << endl;
+    if (!hostid)
         return;
-    }
 
     HostItem *hostItem = findHostItem( hostid );
     if ( !hostItem ) return;
@@ -351,11 +344,8 @@ HostItem *StarView::findHostItem( unsigned int hostid )
 
 void StarView::checkNode( unsigned int hostid )
 {
-//  qDebug() << "StarView::checkNode() " << hostid << endl;
-
-    if ( !hostid ) return;
-
-    if ( !filterArch( hostid ) ) return;
+    if (!hostid || !filterArch(hostid))
+        return;
 
     HostItem *hostItem = findHostItem( hostid );
     if ( !hostItem ) {
@@ -366,8 +356,6 @@ void StarView::checkNode( unsigned int hostid )
 
 void StarView::removeNode( unsigned int hostid )
 {
-//  qDebug() << "StarView::removeNode() " << hostid << endl;
-
     HostItem *hostItem = findHostItem( hostid );
 
     if ( hostItem && hostItem->hostInfo()->isOffline() ) {
@@ -386,25 +374,13 @@ void StarView::forceRemoveNode( unsigned int hostid )
 
 void StarView::removeItem( HostItem *hostItem )
 {
-#if 0
-    qDebug() << "StarView::removeItem() " << hostid << " ("
-             << int( hostItem ) << ")" << endl;
-#endif
-
     m_hostItems.remove( hostItem->hostInfo()->id() );
 
     QList<unsigned int> obsoleteJobs;
 
     QMap<unsigned int,HostItem *>::Iterator it;
     for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
-#if 0
-        qDebug() << " JOB: " << it.key() << " (" << int( it.value() )
-                 << ")" << endl;
-#endif
         if ( it.value() == hostItem ) {
-#if 0
-            qDebug() << " Delete Job " << it.key() << endl;
-#endif
             obsoleteJobs.append( it.key() );
         }
     }
@@ -422,12 +398,7 @@ void StarView::removeItem( HostItem *hostItem )
 
 void StarView::updateSchedulerState( bool online )
 {
-    QString txt;
-    if ( online ) {
-        txt = tr("Scheduler");
-    } else {
-        txt = "";
-    }
+    QString txt = online ? tr("Scheduler") : "";
     delete m_schedulerItem;
 
     if ( !online ) {
@@ -515,8 +486,6 @@ void StarView::centerSchedulerItem()
 
 void StarView::slotConfigChanged()
 {
-//  qDebug() << "StarView::slotConfigChanged()" << endl;
-
     HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
     HostInfoManager::HostMap::ConstIterator it;
     for( it = hostMap.constBegin(); it != hostMap.constEnd(); ++it ) {
@@ -529,17 +498,10 @@ void StarView::slotConfigChanged()
 
 void StarView::arrangeHostItems()
 {
-//  qDebug() << "StarView::arrangeHostItems()" << endl;
-
     int count = m_hostItems.count();
-
-//  qDebug() << "  Count: " << count << endl;
-
     int nodesPerRing = mConfigDialog->nodesPerRing();
-
     int ringCount = int( count / nodesPerRing ) + 1;
 
-//  qDebug() << "  Rings: " << ringCount << endl;
     double radiusFactor = 2.5;
     if (suppressDomain) radiusFactor = 4;
     const int xRadius = qRound( m_canvas->width() / radiusFactor );
@@ -574,10 +536,6 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
     if ( !i || i->isOffline() || i->name().isEmpty() )
         return 0;
-
-//  qDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
-
-    //assert( !i->name().isEmpty() );
 
     HostItem *hostItem = new HostItem( i, m_canvas, hostInfoManager() );
     hostItem->setHostColor( hostColor( hostid ) );

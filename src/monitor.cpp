@@ -30,7 +30,6 @@
 #include <icecc/comm.h>
 #include <QSocketNotifier>
 #include <QTimer>
-#include <QDebug>
 
 #include <list>
 #include <iostream>
@@ -54,7 +53,6 @@ Monitor::~Monitor()
 
 void Monitor::checkScheduler(bool deleteit)
 {
-    qDebug() << "checkScheduler " << deleteit << endl;
     int delay = 0;
     if ( deleteit ) {
         m_rememberedJobs.clear();
@@ -158,7 +156,6 @@ bool Monitor::handleActivity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
-        qDebug() << "lost connection to scheduler\n";
         checkScheduler( true );
         setSchedulerState( false );
         return false;
@@ -175,7 +172,6 @@ bool Monitor::handleActivity()
         handleJobDone( m );
         break;
     case M_END:
-        std::cout << "END" << endl;
         checkScheduler( true );
         break;
     case M_MON_STATS:
@@ -188,7 +184,6 @@ bool Monitor::handleActivity()
         handleLocalDone( m );
         break;
     default:
-        cout << "UNKNOWN" << endl;
         break;
     }
     delete m;
@@ -280,11 +275,6 @@ void Monitor::handleJobBegin( Msg* _m )
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
 
-#if 0
-    qDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
-             << ")" << endl;
-#endif
-
     m_view->update( *it );
 }
 
@@ -314,11 +304,6 @@ void Monitor::handleJobDone( Msg* _m )
         ( *it ).out_compressed = m->out_compressed;
         ( *it ).out_uncompressed = m->out_uncompressed;
     }
-
-#if 0
-    qDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
-             << ")" << endl;
-#endif
 
     m_view->update( *it );
 }
