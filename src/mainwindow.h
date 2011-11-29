@@ -48,9 +48,6 @@ class MainWindow : public QMainWindow
   private slots:
     void setupListView();
     void setupStarView();
-    void setupPoolView();
-    void setupSummaryView();
-    void setupGanttView();
     void setupDetailedHostView();
 
     void stopView();
@@ -83,10 +80,7 @@ class MainWindow : public QMainWindow
     QActionGroup* m_viewMode;
     QAction* m_listView;
     QAction* m_starView;
-    QAction* m_poolView;
     QAction* m_detailedView;
-    QAction* m_ganttView;
-    QAction* m_summaryView;
     QSystemTrayIcon* systemTrayIcon;
     QMenu* systemTrayMenu;
 };

@@ -26,13 +26,10 @@
 #include <QMenuBar>
 #include <QSettings>
 #include "detailedhostview.h"
-#include "ganttstatusview.h"
 #include "hostinfo.h"
 #include "listview.h"
 #include "monitor.h"
 #include "starview.h"
-#include "poolview.h"
-#include "summaryview.h"
 #include "version.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -64,21 +61,6 @@ MainWindow::MainWindow( QWidget *parent )
     m_starView->setCheckable(true);
     m_viewMode->addAction(m_starView);
     connect( m_starView, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
-
-    m_poolView = modeMenu->addAction(tr( "&Pool View" ));
-    m_poolView->setCheckable(true);
-    m_viewMode->addAction(m_poolView);
-    connect( m_poolView, SIGNAL( triggered() ), this, SLOT( setupPoolView() ) );
-
-    m_ganttView = modeMenu->addAction(tr( "&Gantt View" ));
-    m_ganttView->setCheckable(true);
-    m_viewMode->addAction(m_ganttView);
-    connect( m_ganttView, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
-
-    m_summaryView = modeMenu->addAction(tr( "Summary &View" ));
-    m_summaryView->setCheckable(true);
-    m_viewMode->addAction(m_summaryView);
-    connect( m_summaryView, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
 
     m_detailedView = modeMenu->addAction(tr( "&Detailed Host View" ));
     m_detailedView->setCheckable(true);
@@ -129,28 +111,19 @@ MainWindow::~MainWindow()
 void MainWindow::readSettings()
 {
     QSettings cfg;
-    QString viewId = cfg.value( "CurrentView", "star" ).toString();
+    QString viewId = cfg.value("CurrentView").toString();
 
     m_viewMode->blockSignals(true);
 
-    if ( viewId == "gantt" ) {
-        setupGanttView();
-        m_ganttView->setChecked(true);
-    } else if ( viewId == "list" ) {
+    if (viewId == "list") {
         setupListView();
         m_listView->setChecked(true);
-    } else if ( viewId == "star" ) {
-        setupStarView();
-        m_starView->setChecked(true);
-    } else if ( viewId == "pool" ) {
-        setupPoolView();
-        m_poolView->setChecked(true);
-    } else if ( viewId == "detailedhost" ) {
+    } else if (viewId == "detailedhost") {
         setupDetailedHostView();
         m_detailedView->setChecked(true);
     } else {
-        setupSummaryView();
-        m_summaryView->setChecked(true);
+        setupStarView();
+        m_starView->setChecked(true);
     }
 
     // "icecream" is the default netname used by iceccd
@@ -193,24 +166,6 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
 void MainWindow::setupListView()
 {
     setupView( new ListStatusView( m_hostInfoManager, this ), true );
-}
-
-void MainWindow::setupSummaryView()
-{
-    setupView( new SummaryView( m_hostInfoManager, this ), false );
-    m_summaryView->setChecked(true);
-}
-
-void MainWindow::setupGanttView()
-{
-    setupView( new GanttStatusView( m_hostInfoManager, this ), false );
-    m_ganttView->setChecked(true);
-}
-
-void MainWindow::setupPoolView()
-{
-    setupView( new PoolView( m_hostInfoManager, this ), false );
-    m_poolView->setChecked(true);
 }
 
 void MainWindow::setupStarView()

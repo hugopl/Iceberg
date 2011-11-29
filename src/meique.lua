@@ -10,10 +10,7 @@ detailedhostview.cc
 hostlistview.cc
 joblistview.cc
 listview.cc
-ganttstatusview.cc
-summaryview.cc
 starview.cc
-poolview.cc
 ]])
 
 iceberg:addQtResource("icons.qrc")

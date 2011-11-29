@@ -21,10 +21,7 @@ set(iceberg_SRCS
   hostlistview.cc
   joblistview.cc
   listview.cc
-  ganttstatusview.cc
-  summaryview.cc
   starview.cc
-  poolview.cc
 )
 
 qt4_automoc(${iceberg_SRCS})
