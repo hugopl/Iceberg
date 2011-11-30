@@ -21,8 +21,8 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef ICEMON_JOBLISTVIEW_H
-#define ICEMON_JOBLISTVIEW_H
+#ifndef ICEBERG_JOBLISTVIEW_H
+#define ICEBERG_JOBLISTVIEW_H
 
 
 #include "job.h"
