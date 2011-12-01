@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QAction* quitAction = fileMenu->addAction(tr("&Quit"));
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* modeMenu = viewMenu->addMenu(tr("&Mode"));
@@ -105,6 +105,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
+    writeSettings();
     delete m_hostInfoManager;
 }
 
@@ -233,7 +234,7 @@ void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
 {
     switch ( reason ) {
         case QSystemTrayIcon::Trigger:
-            isVisible() ? hide() : showNormal();
+            setVisible(!isVisible());
             break;
         case QSystemTrayIcon::Context:
             systemTrayMenu->show();
@@ -245,7 +246,8 @@ void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    writeSettings();
+    hide();
+    event->ignore();
 }
 
 #include "mainwindow.moc"
