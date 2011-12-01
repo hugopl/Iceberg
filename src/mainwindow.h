@@ -37,7 +37,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    MainWindow(QWidget* parent);
+    MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
     void setCurrentNet(const QByteArray& netName);
