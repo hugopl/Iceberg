@@ -55,26 +55,26 @@ MainWindow::MainWindow(QWidget* parent)
     m_listView = modeMenu->addAction(tr("&List View"));
     m_listView->setCheckable(true);
     m_viewMode->addAction(m_listView);
-    connect( m_listView, SIGNAL(triggered()), this, SLOT(setupListView()));
+    connect(m_listView, SIGNAL(triggered()), this, SLOT(setupListView()));
 
     m_starView = modeMenu->addAction(tr("&Star View"));
     m_starView->setCheckable(true);
     m_viewMode->addAction(m_starView);
-    connect( m_starView, SIGNAL(triggered()), this, SLOT(setupStarView()));
+    connect(m_starView, SIGNAL(triggered()), this, SLOT(setupStarView()));
 
     m_detailedView = modeMenu->addAction(tr("&Detailed Host View"));
     m_detailedView->setCheckable(true);
     m_viewMode->addAction(m_detailedView);
-    connect( m_detailedView, SIGNAL(triggered()), this, SLOT(setupDetailedHostView()));
+    connect(m_detailedView, SIGNAL(triggered()), this, SLOT(setupDetailedHostView()));
 
 
     QAction* actionStart = viewMenu->addAction(tr("&Start"));
-    connect( actionStart, SIGNAL(triggered()), this, SLOT(startView()));
+    connect(actionStart, SIGNAL(triggered()), this, SLOT(startView()));
     QAction* actionStop = viewMenu->addAction(tr("Stop"));
-    connect( actionStop, SIGNAL(triggered()), this, SLOT(stopView()));
+    connect(actionStop, SIGNAL(triggered()), this, SLOT(stopView()));
     viewMenu->addSeparator();
     QAction* actionCheckNodes = viewMenu->addAction(tr("Check Nodes"));
-    connect( actionCheckNodes, SIGNAL(triggered()), this, SLOT(checkNodes()));
+    connect(actionCheckNodes, SIGNAL(triggered()), this, SLOT(checkNodes()));
     viewMenu->addSeparator();
     m_configView = viewMenu->addAction(tr("Configure View..."));
     connect(m_configView, SIGNAL(triggered()), this, SLOT( configureView()));
@@ -133,15 +133,14 @@ void MainWindow::readSettings()
         setCurrentNet(netname);
     }
 
-
     // Load window geometry
-    QRect geom = cfg.value( "geometry" ).toRect();
+    QRect geom = cfg.value("geometry").toRect();
     if (geom.isNull()) {
         QDesktopWidget w;
-        QRect screenGeometry = w.availableGeometry( this );
-        geom = QRect( screenGeometry.center()/2, screenGeometry.size()/2 );
+        QRect screenGeometry = w.availableGeometry(this);
+        geom = QRect(screenGeometry.center()/2, screenGeometry.size()/2 );
     }
-    setGeometry( geom );
+    setGeometry(geom);
 
     m_viewMode->blockSignals(false);
 }
@@ -232,7 +231,7 @@ void MainWindow::showAboutDialog()
 
 void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    switch ( reason ) {
+    switch (reason) {
         case QSystemTrayIcon::Trigger:
             setVisible(!isVisible());
             break;

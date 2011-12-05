@@ -1,7 +1,7 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-        <file>computer.png</file>
-        <file alias="bigIcon.png">hi48-app-iceberg.png</file>
+        <file>../images/computer.png</file>
+        <file alias="bigIcon.png">../images/hi48-app-iceberg.png</file>
     </qresource>
 </RCC>

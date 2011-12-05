@@ -34,8 +34,8 @@ target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICEC
 
 install(TARGETS iceberg DESTINATION bin)
 install(FILES iceberg.desktop DESTINATION share/applications )
-install(FILES hi16-app-iceberg.png DESTINATION share/icons/hicolor/16x16/apps RENAME iceberg.png)
-install(FILES hi22-app-iceberg.png DESTINATION share/icons/hicolor/22x22/apps RENAME iceberg.png)
-install(FILES hi32-app-iceberg.png DESTINATION share/icons/hicolor/32x32/apps RENAME iceberg.png)
-install(FILES hi48-app-iceberg.png DESTINATION share/icons/hicolor/48x48/apps RENAME iceberg.png)
+install(FILES ../images/hi16-app-iceberg.png DESTINATION share/icons/hicolor/16x16/apps RENAME iceberg.png)
+install(FILES ../images/hi22-app-iceberg.png DESTINATION share/icons/hicolor/22x22/apps RENAME iceberg.png)
+install(FILES ../images/hi32-app-iceberg.png DESTINATION share/icons/hicolor/32x32/apps RENAME iceberg.png)
+install(FILES ../images/hi48-app-iceberg.png DESTINATION share/icons/hicolor/48x48/apps RENAME iceberg.png)
 
