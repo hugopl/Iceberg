@@ -5,6 +5,7 @@
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
     Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
+    Copyright (c) 2011 Anselmo L. S. Melo <anselmolsm@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -17,8 +17,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef ICEMON_DETAILEDHOSTVIEW_H
-#define ICEMON_DETAILEDHOSTVIEW_H
+#ifndef ICEBERG_DETAILEDHOSTVIEW_H
+#define ICEBERG_DETAILEDHOSTVIEW_H
 
 
 #include "statusview.h"

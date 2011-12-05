@@ -18,8 +18,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef ICEMON_HOSTINFO_H
-#define ICEMON_HOSTINFO_H
+#ifndef ICEBERG_HOSTINFO_H
+#define ICEBERG_HOSTINFO_H
 
 #include <QCoreApplication>
 #include <QString>

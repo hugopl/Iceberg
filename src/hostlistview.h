@@ -18,8 +18,8 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef ICEMON_HOSTLISTVIEW_H
-#define ICEMON_HOSTLISTVIEW_H
+#ifndef ICEBERG_HOSTLISTVIEW_H
+#define ICEBERG_HOSTLISTVIEW_H
 
 #include "hostinfo.h"
 

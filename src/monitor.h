@@ -4,6 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2011 Anselmo L. S. Melo <anselmolsm@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +20,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef ICEMON_MONITOR_H
-#define ICEMON_MONITOR_H
+#ifndef ICEBERG_MONITOR_H
+#define ICEBERG_MONITOR_H
 
 #include "job.h"
 
