@@ -72,9 +72,6 @@ private:
     enum views {
         ListViewType,
         StarViewType,
-        PoolViewType,
-        GanttViewType,
-        SummaryViewType,
         DetailedHostViewType
     };
 
