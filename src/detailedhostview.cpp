@@ -35,134 +35,120 @@
 static QString myHostName()
 {
     struct utsname uname_buf;
-    if ( ::uname( &uname_buf ) == 0 )
+    if (::uname(&uname_buf) == 0)
         return uname_buf.nodename;
     else
         return QString();
 }
 
-DetailedHostView::DetailedHostView( HostInfoManager* manager,
-                                    QWidget* parent )
-    : QWidget( parent ),
-      StatusView( manager )
+DetailedHostView::DetailedHostView(HostInfoManager* manager, QWidget* parent)
+    : QWidget(parent),
+      StatusView(manager)
 {
-  QBoxLayout* topLayout = new QVBoxLayout( this );
-  topLayout->setMargin( 10 );
+    QBoxLayout* topLayout = new QVBoxLayout(this);
+    topLayout->setMargin(10);
 
-  QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
-  topLayout->addWidget( viewSplitter );
+    QSplitter* viewSplitter = new QSplitter(Qt::Vertical, this);
+    topLayout->addWidget(viewSplitter);
 
-  QWidget *hosts = new QWidget( viewSplitter );
-  QVBoxLayout *dummy = new QVBoxLayout( hosts );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget *hosts = new QWidget(viewSplitter);
+    QVBoxLayout *dummy = new QVBoxLayout(hosts);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
-  mHostListView = new HostListView( manager, hosts );
-  dummy->addWidget(mHostListView);
+    dummy->addWidget(new QLabel(tr("Hosts"), hosts));
+    m_hostListView = new HostListView(manager, hosts);
+    dummy->addWidget(m_hostListView);
 
-  QWidget *locals = new QWidget( viewSplitter );
-  dummy = new QVBoxLayout( locals );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget *locals = new QWidget(viewSplitter);
+    dummy = new QVBoxLayout(locals);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
-  mLocalJobsView = new JobListView( manager, locals );
-  mLocalJobsView->setClientColumnVisible( false );
-  mLocalJobsView->setExpireDuration( 5 );
-  dummy->addWidget(mLocalJobsView);
+    dummy->addWidget(new QLabel(tr("Outgoing jobs"), locals));
+    m_localJobsView = new JobListView(manager, locals);
+    m_localJobsView->setClientColumnVisible(false);
+    m_localJobsView->setExpireDuration(5);
+    dummy->addWidget(m_localJobsView);
 
-  QWidget* remotes = new QWidget( viewSplitter );
-  dummy = new QVBoxLayout( remotes );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget* remotes = new QWidget(viewSplitter);
+    dummy = new QVBoxLayout(remotes);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
-  mRemoteJobsView = new JobListView( manager, remotes );
-  mRemoteJobsView->setServerColumnVisible( false );
-  mRemoteJobsView->setExpireDuration( 5 );
-  dummy->addWidget(mRemoteJobsView);
+    dummy->addWidget(new QLabel(tr("Incoming jobs"), remotes));
+    m_remoteJobsView = new JobListView(manager, remotes);
+    m_remoteJobsView->setServerColumnVisible(false);
+    m_remoteJobsView->setExpireDuration(5);
+    dummy->addWidget(m_remoteJobsView);
 
-  connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
-          this, SLOT( slotNodeActivated() ) );
+    connect(m_hostListView, SIGNAL(nodeActivated(unsigned int)),
+          this, SLOT(slotNodeActivated()));
 
-  createKnownHosts();
+    createKnownHosts();
 }
 
-
-void DetailedHostView::update( const Job &job )
+void DetailedHostView::update(const Job &job)
 {
-    const unsigned int hostid = mHostListView->activeNode();
+    const unsigned int hostid = m_hostListView->activeNode();
 
-    if ( !hostid )
+    if (!hostid)
         return;
 
-    if ( job.client() != hostid && job.server() != hostid )
+    if (job.client() != hostid && job.server() != hostid)
         return;
 
-    if ( job.client() == hostid )
-        mLocalJobsView->update( job );
-    if ( job.server() == hostid )
-        mRemoteJobsView->update( job );
+    if (job.client() == hostid)
+        m_localJobsView->update(job);
+    if (job.server() == hostid)
+        m_remoteJobsView->update(job);
 }
 
-
-void DetailedHostView::checkNode( unsigned int hostid )
+void DetailedHostView::checkNode(unsigned int hostid)
 {
-    if ( !hostid )
+    if (!hostid)
         return;
 
-    mHostListView->checkNode( hostid );
+    m_hostListView->checkNode(hostid);
 
-    const unsigned int activeNode = mHostListView->activeNode();
+    const unsigned int activeNode = m_hostListView->activeNode();
 
-    if ( !activeNode )
-    {
-        HostInfo* info = hostInfoManager()->find( hostid );
-        if ( info->name() == myHostName() )
-            mHostListView->setActiveNode( hostid );
+    if (!activeNode) {
+        HostInfo* info = hostInfoManager()->find(hostid);
+        if (info->name() == myHostName())
+            m_hostListView->setActiveNode(hostid);
     }
 }
 
-
-void DetailedHostView::removeNode( unsigned int hostid )
+void DetailedHostView::removeNode(unsigned int hostid)
 {
-    mHostListView->removeNode( hostid );
+    m_hostListView->removeNode(hostid);
 }
 
-
-void DetailedHostView::updateSchedulerState( bool online )
+void DetailedHostView::updateSchedulerState(bool online)
 {
-    if ( !online )
-    {
-        mHostListView->clear();
-        mLocalJobsView->clear();
-        mRemoteJobsView->clear();
+    if (!online) {
+        m_hostListView->clear();
+        m_localJobsView->clear();
+        m_remoteJobsView->clear();
     }
 }
-
 
 void DetailedHostView::slotNodeActivated()
 {
-    mLocalJobsView->clear();
-    mRemoteJobsView->clear();
+    m_localJobsView->clear();
+    m_remoteJobsView->clear();
 }
-
 
 void DetailedHostView::createKnownHosts()
 {
     const HostInfoManager::HostMap& hosts(hostInfoManager()->hostMap());
-
-    for (HostInfoManager::HostMap::ConstIterator it( hosts.begin() ),
-                                                 itEnd( hosts.end() );
-         it != itEnd; ++it )
-    {
-        const unsigned int hostid( (*it)->id() );
-
-        checkNode( hostid );
+    HostInfoManager::HostMap::ConstIterator it(hosts.begin()), itEnd(hosts.end());
+    for (; it != itEnd; ++it) {
+        const unsigned int hostid((*it)->id());
+        checkNode(hostid);
     }
 }
-
 
 QWidget* DetailedHostView::widget()
 {

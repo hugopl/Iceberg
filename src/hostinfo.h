@@ -33,26 +33,21 @@ class HostInfo
 public:
     HostInfo(unsigned int id);
 
-    unsigned int id() const;
-
-    QString name() const;
-    QColor color() const;
-
-    QString ip() const;
-    QString platform() const;
-
-    unsigned int maxJobs() const;
-    bool isOffline() const;
+    unsigned int id() const { return m_id; }
+    QString name() const { return m_name; }
+    QColor color() const { return m_color; }
+    QString ip() const { return m_ip; }
+    QString platform() const { return m_platform; }
+    unsigned int maxJobs() const { return m_maxJobs; }
+    bool isOffline() const { return m_offline; }
+    float serverSpeed() const { return m_serverSpeed; }
+    unsigned int serverLoad() const { return m_serverLoad; }
 
     typedef QMap<QString,QString> StatsMap;
     void updateFromStatsMap(const StatsMap& stats);
 
     static void initColorTable();
     static QString colorName(const QColor& color);
-
-    float serverSpeed() const;
-
-    unsigned int serverLoad() const;
 
 protected:
     static void initColor(const QString& value, const QString& name);
@@ -65,14 +60,10 @@ private:
     QString m_name;
     QColor m_color;
     QString m_platform;
-
     QString m_ip;
-
     unsigned int m_maxJobs;
     bool m_offline;
-
     float m_serverSpeed;
-
     unsigned int m_serverLoad;
 
     static QVector<QColor> m_colorTable;
@@ -81,7 +72,7 @@ private:
 
 class HostInfoManager
 {
-Q_DECLARE_TR_FUNCTIONS(HostInfoManager)
+    Q_DECLARE_TR_FUNCTIONS(HostInfoManager)
 public:
     HostInfoManager();
     ~HostInfoManager();
@@ -89,7 +80,6 @@ public:
     HostInfo* find(unsigned int hostid) const;
 
     typedef QMap<unsigned int,HostInfo*> HostMap;
-
     HostMap hostMap() const;
 
     HostInfo* checkNode(unsigned int hostid, const HostInfo::StatsMap& statmsg);
@@ -99,9 +89,10 @@ public:
     unsigned int maxJobs(unsigned int id) const;
 
     QString schedulerName() const { return m_schedulerName; }
-    void setSchedulerName(const QString& schedulerName);
+    void setSchedulerName(const QString& name) { m_schedulerName = name; }
+
     QString networkName() const { return m_networkName; }
-    void setNetworkName(const QString& networkName);
+    void setNetworkName(const QString& name) { m_networkName = name; }
 
 private:
     HostMap m_hostMap;
@@ -110,4 +101,3 @@ private:
 };
 
 #endif
-// vim:ts=4:sw=4:noet

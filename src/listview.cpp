@@ -27,19 +27,18 @@
 
 #include <QVBoxLayout>
 
-ListStatusView::ListStatusView( HostInfoManager* manager,
-                                QWidget* parent )
-    : QWidget( parent ),
-      StatusView( manager ),
-      mJobsListView( new JobListView( manager, this, "Jobs" ) )
+ListStatusView::ListStatusView(HostInfoManager* manager, QWidget* parent)
+    : QWidget(parent),
+      StatusView(manager),
+      m_jobsListView(new JobListView(manager, this, "Jobs"))
 {
-    QVBoxLayout* topLayout = new QVBoxLayout( this );
-    topLayout->addWidget( mJobsListView );
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    topLayout->addWidget(m_jobsListView);
 }
 
-void ListStatusView::update( const Job &job )
+void ListStatusView::update(const Job &job)
 {
-    mJobsListView->update( job );
+    m_jobsListView->update(job);
 }
 
 #include "listview.moc"

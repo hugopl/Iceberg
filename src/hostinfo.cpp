@@ -28,98 +28,51 @@ QMap<int,QString> HostInfo::m_colorNameMap;
 
 void HostInfo::initColorTable()
 {
-    initColor( "#A5080B", tr("cherry") );
-    initColor( "#76d26f", tr("pistachio"));
-    initColor( "#664a08", tr("chocolate"));
-    initColor( "#4c9dff", tr("smurf"));
-    initColor( "#6c2ca8", tr("blueberry"));
-    initColor( "#fa8344", tr("orange"));
-    initColor( "#55CFBD", tr("mint"));
-    initColor( "#db1230", tr("strawberry"));
-    initColor( "#a6ea5e", tr("apple"));
-    initColor( "#D6A3D8", tr("bubblegum"));
-    initColor( "#f2aa4d", tr("peach"));
-    initColor( "#aa1387", tr("plum"));
-    initColor( "#26c3f7", tr("polar sea"));
-    initColor( "#b8850e", tr("nut"));
-    initColor( "#6a188d", tr("blackberry"));
-    initColor( "#24b063", tr("woodruff"));
-    initColor( "#ffff0f", tr("banana"));
-    initColor( "#1e1407", tr("mocha"));
-    initColor( "#29B450", tr("kiwi"));
-    initColor( "#F8DD31", tr("lemon"));
-    initColor( "#fa7e91", tr("raspberry"));
-    initColor( "#c5a243", tr("caramel"));
-    initColor( "#b8bcff", tr("blueberry"));
+    initColor("#A5080B", tr("cherry"));
+    initColor("#76d26f", tr("pistachio"));
+    initColor("#664a08", tr("chocolate"));
+    initColor("#4c9dff", tr("smurf"));
+    initColor("#6c2ca8", tr("blueberry"));
+    initColor("#fa8344", tr("orange"));
+    initColor("#55CFBD", tr("mint"));
+    initColor("#db1230", tr("strawberry"));
+    initColor("#a6ea5e", tr("apple"));
+    initColor("#D6A3D8", tr("bubblegum"));
+    initColor("#f2aa4d", tr("peach"));
+    initColor("#aa1387", tr("plum"));
+    initColor("#26c3f7", tr("polar sea"));
+    initColor("#b8850e", tr("nut"));
+    initColor("#6a188d", tr("blackberry"));
+    initColor("#24b063", tr("woodruff"));
+    initColor("#ffff0f", tr("banana"));
+    initColor("#1e1407", tr("mocha"));
+    initColor("#29B450", tr("kiwi"));
+    initColor("#F8DD31", tr("lemon"));
+    initColor("#fa7e91", tr("raspberry"));
+    initColor("#c5a243", tr("caramel"));
+    initColor("#b8bcff", tr("blueberry"));
     // try to make the count a prime number (reminder: 19, 23, 29, 31)
-    // initColor( "#ffb8c0", tr("blackcurrant"));
-    // initColor( "#f7d36f", tr("passionfruit"));
-    // initColor( "#d51013", tr("pomegranate"));
-    // initColor( "#C2C032", tr("pumpkin" ) );
+    // initColor("#ffb8c0", tr("blackcurrant"));
+    // initColor("#f7d36f", tr("passionfruit"));
+    // initColor("#d51013", tr("pomegranate"));
+    // initColor("#C2C032", tr("pumpkin"));
 }
 
 void HostInfo::initColor(const QString& value, const QString& name)
 {
     QColor c(value);
     m_colorTable.append(c);
-
     m_colorNameMap.insert(c.red() + c.green() * 256 + c.blue() * 65536, name);
 }
 
 QString HostInfo::colorName(const QColor& color)
 {
     int key = color.red() + color.green() * 256 + color.blue() * 65536;
-
     return m_colorNameMap.value(key, tr("<unknown>"));
 }
 
-HostInfo::HostInfo(unsigned int id) : m_id( id )
+HostInfo::HostInfo(unsigned int id) : m_id(id)
 {
-}
-
-unsigned int HostInfo::id() const
-{
-    return m_id;
-}
-
-QColor HostInfo::color() const
-{
-    return m_color;
-}
-
-QString HostInfo::name() const
-{
-    return m_name;
-}
-
-QString HostInfo::ip() const
-{
-    return m_ip;
-}
-
-QString HostInfo::platform() const
-{
-    return m_platform;
-}
-
-unsigned int HostInfo::maxJobs() const
-{
-    return m_maxJobs;
-}
-
-bool HostInfo::isOffline() const
-{
-    return m_offline;
-}
-
-float HostInfo::serverSpeed() const
-{
-    return m_serverSpeed;
-}
-
-unsigned int HostInfo::serverLoad() const
-{
-    return m_serverLoad;
 }
 
 void HostInfo::updateFromStatsMap(const StatsMap& stats)
@@ -134,10 +87,8 @@ void HostInfo::updateFromStatsMap(const StatsMap& stats)
     }
 
     m_maxJobs = stats["MaxJobs"].toUInt();
-    m_offline = ( stats["State"] == "Offline" );
-
+    m_offline = stats["State"] == "Offline";
     m_serverSpeed = stats["Speed"].toFloat();
-
     m_serverLoad = stats["Load"].toUInt();
 }
 
@@ -150,8 +101,7 @@ QColor HostInfo::createColor(const QString& name)
     for(uint i = 0; i < (uint)name.length(); ++i) {
         ch = name[i].unicode();
         h = (h << 4) + ch;
-        if ((g = (h & 0xf0000000)) != 0)
-        {
+        if ((g = (h & 0xf0000000)) != 0) {
             h ^= g >> 24;
             h ^= g;
         }
@@ -166,8 +116,7 @@ QColor HostInfo::createColor(const QString& name)
 QColor HostInfo::createColor()
 {
     static int num = 0;
-
-    return m_colorTable.at( num++ % m_colorTable.count() );
+    return m_colorTable.at((num++) % m_colorTable.count());
 }
 
 HostInfoManager::HostInfoManager()
@@ -187,7 +136,7 @@ HostInfo* HostInfoManager::find(unsigned int hostid) const
 
 HostInfo* HostInfoManager::checkNode(unsigned int hostid, const HostInfo::StatsMap& stats)
 {
-    HostMap::ConstIterator it = m_hostMap.constFind( hostid );
+    HostMap::ConstIterator it = m_hostMap.constFind(hostid);
     HostInfo* hostInfo;
     if (it == m_hostMap.constEnd()) {
         hostInfo = new HostInfo(hostid);
@@ -222,34 +171,23 @@ QColor HostInfoManager::hostColor(unsigned int id) const
     }
 
     qWarning() << "id " << id << " got no color\n";
-    assert( false );
+    assert(false);
 
     return QColor(0, 0, 0);
 }
 
 unsigned int HostInfoManager::maxJobs(unsigned int id) const
 {
-  if (id) {
-    HostInfo* hostInfo = find(id);
-    if (hostInfo)
-        return hostInfo->maxJobs();
-  }
+    if (id) {
+        HostInfo* hostInfo = find(id);
+        if (hostInfo)
+            return hostInfo->maxJobs();
+    }
 
-  return 0;
+    return 0;
 }
 
 HostInfoManager::HostMap HostInfoManager::hostMap() const
 {
   return m_hostMap;
 }
-
-void HostInfoManager::setSchedulerName(const QString& schedulerName)
-{
-    m_schedulerName = schedulerName;
-}
-
-void HostInfoManager::setNetworkName(const QString& networkName)
-{
-    m_networkName = networkName;
-}
-

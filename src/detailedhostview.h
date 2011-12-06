@@ -32,7 +32,6 @@ class DetailedHostView : public QWidget, public StatusView
     Q_OBJECT
 
 public:
-
     DetailedHostView(HostInfoManager* manager, QWidget* parent);
 
     void update(const Job& job);
@@ -48,16 +47,14 @@ public:
     void updateSchedulerState(bool online);
 
 private slots:
-
     void slotNodeActivated();
 
 private:
-
     void createKnownHosts();
 
-    HostListView* mHostListView;
-    JobListView* mLocalJobsView;
-    JobListView* mRemoteJobsView;
+    HostListView* m_hostListView;
+    JobListView* m_localJobsView;
+    JobListView* m_remoteJobsView;
 };
 
 

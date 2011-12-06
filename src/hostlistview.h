@@ -30,69 +30,53 @@
 class HostListViewItem : public Q3ListViewItem
 {
 public:
-
-    HostListViewItem( Q3ListView* parent, const HostInfo& info );
+    HostListViewItem(Q3ListView* parent, const HostInfo& info);
 
     const HostInfo& hostInfo() const;
+    void setActiveNode(bool active);
+    void updateText(const HostInfo& info);
 
-    void setActiveNode( bool active );
-
-    void updateText( const HostInfo& info);
-
-    virtual int compare( Q3ListViewItem* i, int col, bool ascending ) const;
-
-    virtual void paintCell( QPainter* painter, const QColorGroup& cg, int column, int width, int align );
-
-    virtual int width( const QFontMetrics& fm, const Q3ListView* lv, int column ) const;
+    virtual int compare(Q3ListViewItem* i, int col, bool ascending) const;
+    virtual void paintCell(QPainter* painter, const QColorGroup& cg, int column, int width, int align);
+    virtual int width(const QFontMetrics& fm, const Q3ListView* lv, int column) const;
 
 private:
-
-    HostInfo mHostInfo;
-
-    bool mActive;
+    HostInfo m_hostInfo;
+    bool m_active;
 };
 
 
-class HostListView :public Q3ListView
+class HostListView : public Q3ListView
 {
     Q_OBJECT
 
 public:
-
-    HostListView( HostInfoManager* manager, QWidget* parent );
+    HostListView(HostInfoManager* manager, QWidget* parent);
 
     unsigned int activeNode() const;
+    void setActiveNode(unsigned int hostid);
 
-    void setActiveNode( unsigned int hostid );
-
-    void checkNode( unsigned int hostid );
-
-    void removeNode( unsigned int hostid );
-
+    void checkNode(unsigned int hostid);
+    void removeNode(unsigned int hostid);
     virtual void clear();
 
 signals:
-
-    void nodeActivated( unsigned int hostid );
+    void nodeActivated(unsigned int hostid);
 
 private slots:
-
-    void slotNodeActivated( Q3ListViewItem* item );
-
+    void slotNodeActivated(Q3ListViewItem* item);
     void updateSort();
 
 private:
+    void setActiveNode(unsigned int hostid, bool active);
 
-    void setActiveNode( unsigned int hostid, bool active );
-
-    HostInfoManager* mHostInfoManager;
-
-    unsigned int mActiveNode;
+    HostInfoManager* m_hostInfoManager;
+    unsigned int m_activeNode;
 
     typedef QMap<unsigned int, HostListViewItem*> ItemMap;
-    ItemMap mItems;
+    ItemMap m_items;
 
-    QTimer mUpdateSortTimer;
+    QTimer m_updateSortTimer;
 };
 
 
