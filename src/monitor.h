@@ -37,32 +37,33 @@ class QSocketNotifier;
 class Monitor : public QObject
 {
     Q_OBJECT
-  public:
-    Monitor( HostInfoManager*, QObject* parent);
+
+public:
+    Monitor(HostInfoManager*, QObject* parent);
     ~Monitor();
 
-    void setCurrentNet( const QByteArray& );
-    QByteArray currentNet () const;
+    void setCurrentNet(const QByteArray& name) { m_currentNetName = name; }
+    QByteArray currentNet() const { return m_currentNetName; }
 
-    void setCurrentView( StatusView*, bool rememberJobs );
+    void setCurrentView(StatusView*, bool rememberJobs);
     void checkScheduler(bool deleteit = false);
 
-  protected:
-    void setSchedulerState( bool );
+protected:
+    void setSchedulerState(bool);
 
-  private slots:
+private slots:
     void slotCheckScheduler();
     void msgReceived();
 
-  private:
+private:
     void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
     bool handleActivity();
-    void handleGetcs( Msg* m );
-    void handleJobBegin( Msg* m );
-    void handleJobDone( Msg* m );
-    void handleStats( Msg* m );
-    void handleLocalBegin( Msg* m );
-    void handleLocalDone( Msg* m );
+    void handleGetcs(Msg* m);
+    void handleJobBegin(Msg* m);
+    void handleJobDone(Msg* m);
+    void handleStats(Msg* m);
+    void handleLocalBegin(Msg* m);
+    void handleLocalDone(Msg* m);
 
     HostInfoManager* m_hostInfoManager;
     StatusView* m_view;
@@ -74,8 +75,6 @@ class Monitor : public QObject
     DiscoverSched* m_discover;
     QSocketNotifier* m_fd_notify;
     QSocketNotifier::Type m_fd_type;
-
 };
 
-#endif // MON_KDE_H
-// vim:ts=4:sw=4:noet
+#endif // ICEBERG_MONITOR_H

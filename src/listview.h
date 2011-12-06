@@ -28,22 +28,21 @@
 
 class JobListView;
 
-class ListStatusView :public QWidget, public StatusView
+class ListStatusView : public QWidget, public StatusView
 {
     Q_OBJECT
+
 public:
-    ListStatusView( HostInfoManager* manager, QWidget* parent );
+    ListStatusView(HostInfoManager* manager, QWidget* parent);
 
     virtual QWidget* widget() { return this; }
 
-    virtual void update( const Job& job );
+    virtual void update(const Job& job);
 
     virtual QString id() const { return "list"; }
 
 private:
-
-    JobListView* mJobsListView;
+    JobListView* m_jobsListView;
 };
 
 #endif
-// vim:ts=4:sw=4:noet

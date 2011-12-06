@@ -32,17 +32,17 @@ class QWidget;
 
 class StatusView
 {
-  public:
-    StatusView( HostInfoManager * );
+public:
+    StatusView(HostInfoManager *);
     virtual ~StatusView();
 
-    HostInfoManager *hostInfoManager() const { return mHostInfoManager; }
+    HostInfoManager *hostInfoManager() const { return m_hostInfoManager; }
 
-    virtual void update( const Job &job ) = 0;
+    virtual void update(const Job &job) = 0;
     virtual QWidget *widget() = 0;
-    virtual void checkNode( unsigned int hostid );
-    virtual void removeNode( unsigned int hostid );
-    virtual void updateSchedulerState( bool online );
+    virtual void checkNode(unsigned int hostid);
+    virtual void removeNode(unsigned int hostid);
+    virtual void updateSchedulerState(bool online);
 
     virtual void stop() {}
     virtual void start() {}
@@ -52,16 +52,15 @@ class StatusView
 
     virtual QString id() const = 0;
 
-    unsigned int processor( const Job & );
+    unsigned int processor(const Job &);
 
-    QString nameForHost( unsigned int hostid );
-    QColor hostColor( unsigned int hostid );
+    QString nameForHost(unsigned int hostid);
+    QColor hostColor(unsigned int hostid);
 
-    static QColor textColor( const QColor &backGroundColor );
+    static QColor textColor(const QColor &backGroundColor);
 
-  private:
-    HostInfoManager *mHostInfoManager;
+private:
+    HostInfoManager *m_hostInfoManager;
 };
 
 #endif
-// vim:ts=4:sw=4:noet

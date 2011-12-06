@@ -30,8 +30,8 @@
 #include <QDebug>
 #include <QTime>
 
-StatusView::StatusView( HostInfoManager *m )
-  : mHostInfoManager( m )
+StatusView::StatusView(HostInfoManager *m)
+  : m_hostInfoManager(m)
 {
 }
 
@@ -39,52 +39,55 @@ StatusView::~StatusView()
 {
 }
 
-void StatusView::checkNode( unsigned int )
+void StatusView::checkNode(unsigned int)
 {
 }
 
-void StatusView::removeNode( unsigned int )
+void StatusView::removeNode(unsigned int)
 {
 }
 
-void StatusView::updateSchedulerState( bool online )
+void StatusView::updateSchedulerState(bool online)
 {
 }
 
-QString StatusView::nameForHost( unsigned int id )
+QString StatusView::nameForHost(unsigned int id)
 {
-  return mHostInfoManager->nameForHost( id );
+  return m_hostInfoManager->nameForHost(id);
 }
 
-QColor StatusView::hostColor( unsigned int id )
+QColor StatusView::hostColor(unsigned int id)
 {
-  return mHostInfoManager->hostColor( id );
+  return m_hostInfoManager->hostColor(id);
 }
 
-QColor StatusView::textColor( const QColor &color )
+QColor StatusView::textColor(const QColor &color)
 {
   QColor textColor;
 
-  float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
-                    ( color.blue() * 0.114 );
-  if ( luminance > 140.0 ) textColor = Qt::black;
-  else textColor = Qt::white;
+  float luminance = (color.red() * 0.299)
+                    + (color.green() * 0.587)
+                    + (color.blue() * 0.114);
+  if (luminance > 140.0)
+      textColor = Qt::black;
+  else
+      textColor = Qt::white;
 
   return textColor;
 }
 
-unsigned int StatusView::processor( const Job &job )
+unsigned int StatusView::processor(const Job &job)
 {
     unsigned int ret = 0;
-    if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
+    if (job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS) {
         ret = job.client();
     } else {
         ret = job.server();
-        if ( !ret ) {
-	  //            Q_ASSERT( job.state() == Job::Finished );
+        if (!ret) {
+            // Q_ASSERT(job.state() == Job::Finished);
             ret = job.client();
         }
     }
-    assert( ret );
+    assert(ret);
     return ret;
 }
