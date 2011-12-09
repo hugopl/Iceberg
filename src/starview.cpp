@@ -402,7 +402,7 @@ void StarView::removeItem(HostItem *hostItem)
 
 void StarView::updateSchedulerState(bool online)
 {
-    QString txt = online ? tr("Scheduler") : "";
+    QString txt = online ? hostInfoManager()->networkName() : "???";
     delete m_schedulerItem;
 
     if (!online) {
