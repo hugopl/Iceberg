@@ -24,6 +24,7 @@
 #include <QLocale>
 #include <QFontMetrics>
 #include <QPainter>
+#include <QApplication>
 
 enum Columns
 {
@@ -38,8 +39,8 @@ enum Columns
 };
 
 
-HostListViewItem::HostListViewItem(Q3ListView* parent, const HostInfo& info)
-    :  Q3ListViewItem(parent),
+HostListViewItem::HostListViewItem(QTreeWidget* parent, const HostInfo& info)
+    :  QTreeWidgetItem(parent),
        m_hostInfo(info),
        m_active(false)
 {
@@ -56,8 +57,7 @@ const HostInfo& HostListViewItem::hostInfo() const
 void HostListViewItem::setActiveNode(bool active)
 {
     m_active = active;
-
-    repaint();
+    //repaint();
 }
 
 
@@ -75,39 +75,22 @@ void HostListViewItem::updateText(const HostInfo& info)
 }
 
 
-template <typename Type>
-int compare(Type i1, Type i2)
+bool HostListViewItem::operator<(const QTreeWidgetItem& item) const
 {
-    if (i1 < i2)
-        return -1;
-    else if (i2 < i1)
-        return 1;
-    else
-        return 0;
-}
-
-
-int HostListViewItem::compare(Q3ListViewItem *i, int col, bool) const
-{
-    const HostListViewItem* first = this;
-    const HostListViewItem* other = dynamic_cast<HostListViewItem*>(i);
-
-    // Workaround a Qt4 regression: before the item creation is complete
-    // compare() is called (insertItem() -> firstChild() -> enforceSortOrder())
-    if (!other)
-        return 0;
+    const HostListViewItem* other = dynamic_cast<const HostListViewItem *>(&item);
+    const int col = (treeWidget() ? treeWidget()->sortColumn() : 0);
 
     switch (col) {
-        case ColumnID:
-            return ::compare(first->m_hostInfo.id(), other->m_hostInfo.id());
-        case ColumnMaxJobs:
-            return ::compare(first->m_hostInfo.maxJobs(), other->m_hostInfo.maxJobs());
-        case ColumnSpeed:
-            return ::compare(first->m_hostInfo.serverSpeed(), other->m_hostInfo.serverSpeed());
-        case ColumnLoad:
-            return ::compare(first->m_hostInfo.serverLoad(), other->m_hostInfo.serverLoad());
-        default:
-            return first->text(col).compare(other->text(col));
+    case ColumnID:
+        return m_hostInfo.id() < other->m_hostInfo.id();
+    case ColumnMaxJobs:
+        return m_hostInfo.maxJobs() < other->m_hostInfo.maxJobs();
+    case ColumnSpeed:
+        return m_hostInfo.serverSpeed() < other->m_hostInfo.serverSpeed();
+    case ColumnLoad:
+        return m_hostInfo.serverLoad() < other->m_hostInfo.serverLoad();
+    default:
+        return text(col) < other->text(col);
     }
 }
 
@@ -123,23 +106,21 @@ void HostListViewItem::paintCell(QPainter* painter, const QColorGroup& cg,
         painter->setFont(font);
     }
 
-    Q3ListViewItem::paintCell(painter, cg, column, width, align);
-
+    //QTreeWidgetItem::paintCell(painter, cg, column, width, align);
     painter->setFont(oldFont);
 }
 
 
-int HostListViewItem::width(const QFontMetrics& fm, const Q3ListView* lv, int column) const
+int HostListViewItem::width(const QFontMetrics& fm, const QTreeWidget* lv, int column) const
 {
     int width = 0;
     if (m_active) {
         QFont font(lv->font());
         font.setBold(true);
         const QFontMetrics metrics(font);
-        width = metrics.width(text(column)) + lv->itemMargin() * 2 + 2;
-    }
-    else {
-        width = Q3ListViewItem::width(fm, lv, column);
+        width = metrics.width(text(column)) + /*lv->itemMargin()*/ 0 * 2 + 2;
+    } else {
+        //width = QTreeWidgetItem::width(fm, lv, column);
     }
 
     return width;
@@ -147,32 +128,26 @@ int HostListViewItem::width(const QFontMetrics& fm, const Q3ListView* lv, int co
 
 
 HostListView::HostListView(HostInfoManager* manager, QWidget* parent)
-    : Q3ListView(parent),
+    : QTreeWidget(parent),
       m_hostInfoManager(manager),
       m_activeNode(0)
 {
-    addColumn(tr("ID"));
-    addColumn(tr("Name"));
-    addColumn(tr("Color"));
-    addColumn(tr("IP"));
-    addColumn(tr("Platform"));
-    addColumn(tr("Max Jobs"));
-    addColumn(tr("Speed"));
-    addColumn(tr("Load"));
+    qApp->setStyleSheet("QTreeView::branch { border-image: none; image: none }");
 
-    setColumnAlignment(ColumnID, Qt::AlignRight);
+    QStringList headers;
+    headers << tr("ID") << tr("Name") << tr("Color") << tr("IP") << tr("Platform")
+            << tr("Max Jobs") << tr("Speed") << tr("Load");
+    setHeaderLabels(headers);
+
+    /*setColumnAlignment(ColumnID, Qt::AlignRight);
     setColumnAlignment(ColumnMaxJobs, Qt::AlignRight);
     setColumnAlignment(ColumnSpeed, Qt::AlignRight);
-    setColumnAlignment(ColumnLoad, Qt::AlignRight);
+    setColumnAlignment(ColumnLoad, Qt::AlignRight);*/
 
     setAllColumnsShowFocus(true);
 
-    connect(this, SIGNAL(doubleClicked(Q3ListViewItem*, const QPoint&, int)),
-            this, SLOT(slotNodeActivated(Q3ListViewItem*)));
-    connect(this, SIGNAL(returnPressed(Q3ListViewItem*)),
-            this, SLOT(slotNodeActivated(Q3ListViewItem*)));
-    connect(this, SIGNAL(spacePressed(Q3ListViewItem*)),
-            this, SLOT(slotNodeActivated(Q3ListViewItem*)));
+    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+            this, SLOT(slotNodeActivated(QTreeWidgetItem*)));
     connect(&m_updateSortTimer, SIGNAL(timeout()), SLOT(updateSort()));
 }
 
@@ -192,7 +167,6 @@ void HostListView::setActiveNode(unsigned int hostid)
     setActiveNode(hostid, true);
 
     m_activeNode = hostid;
-
     emit nodeActivated(hostid);
 }
 
@@ -232,12 +206,12 @@ void HostListView::removeNode(unsigned int hostid)
 void HostListView::clear()
 {
     m_items.clear();
-    Q3ListView::clear();
+    QTreeWidget::clear();
     setActiveNode(0);
 }
 
 
-void HostListView::slotNodeActivated(Q3ListViewItem* item)
+void HostListView::slotNodeActivated(QTreeWidgetItem* item)
 {
     HostListViewItem* hostItem = dynamic_cast<HostListViewItem*>(item);
     if (hostItem)
@@ -255,7 +229,7 @@ void HostListView::setActiveNode(unsigned int hostid, bool active)
 void HostListView::updateSort()
 {
     if(sortColumn() != 0)
-        sort();
+        sortItems(sortColumn(), Qt::AscendingOrder);
 }
 
 #include "hostlistview.moc"

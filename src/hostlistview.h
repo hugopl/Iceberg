@@ -24,21 +24,23 @@
 #include "hostinfo.h"
 
 #include <QPalette>
-#include <Q3ListView>
+#include <QTreeWidget>
 #include <QTimer>
 
-class HostListViewItem : public Q3ListViewItem
+class HostListViewItem : public QTreeWidgetItem
 {
 public:
-    HostListViewItem(Q3ListView* parent, const HostInfo& info);
+    HostListViewItem(QTreeWidget* parent, const HostInfo& info);
 
     const HostInfo& hostInfo() const;
     void setActiveNode(bool active);
     void updateText(const HostInfo& info);
 
-    virtual int compare(Q3ListViewItem* i, int col, bool ascending) const;
+    virtual bool operator<(const QTreeWidgetItem& item) const;
+
+    // XXX
     virtual void paintCell(QPainter* painter, const QColorGroup& cg, int column, int width, int align);
-    virtual int width(const QFontMetrics& fm, const Q3ListView* lv, int column) const;
+    virtual int width(const QFontMetrics& fm, const QTreeWidget* lv, int column) const;
 
 private:
     HostInfo m_hostInfo;
@@ -46,7 +48,7 @@ private:
 };
 
 
-class HostListView : public Q3ListView
+class HostListView : public QTreeWidget
 {
     Q_OBJECT
 
@@ -64,7 +66,7 @@ signals:
     void nodeActivated(unsigned int hostid);
 
 private slots:
-    void slotNodeActivated(Q3ListViewItem* item);
+    void slotNodeActivated(QTreeWidgetItem* item);
     void updateSort();
 
 private:
