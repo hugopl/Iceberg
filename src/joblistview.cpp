@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QTimer>
 #include <QApplication>
+#include <QHeaderView>
 
 enum JobJobColumns
 {
@@ -48,6 +49,12 @@ enum JobJobColumns
 JobListViewItem::JobListViewItem(QTreeWidget* parent, const Job& job)
     :  QTreeWidgetItem(parent)
 {
+    setTextAlignment(JobColumnID, Qt::AlignRight);
+    setTextAlignment(JobColumnReal, Qt::AlignRight);
+    setTextAlignment(JobColumnUser, Qt::AlignRight);
+    setTextAlignment(JobColumnFaults, Qt::AlignRight);
+    setTextAlignment(JobColumnSizeIn, Qt::AlignRight);
+    setTextAlignment(JobColumnSizeOut, Qt::AlignRight);
     updateText(job);
 }
 
