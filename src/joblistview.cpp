@@ -176,6 +176,12 @@ JobListView::JobListView( const HostInfoManager* manager,
     const int nHeaders = headers.count();
     setColumnCount(nHeaders);
 
+    // Auto adjust columns according to their content
+    QHeaderView *headerView = header();
+    for (int i = 0; i < nHeaders; ++i) {
+        headerView->setResizeMode(i, QHeaderView::ResizeToContents);
+    }
+    headerView->setStretchLastSection(false);
 
     setAllColumnsShowFocus(true);
 
