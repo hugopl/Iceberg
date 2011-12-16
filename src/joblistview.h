@@ -33,7 +33,6 @@
 
 
 class HostInfoManager;
-
 class QTimer;
 
 
@@ -42,11 +41,11 @@ class JobListViewItem : public QTreeWidgetItem
     Q_DECLARE_TR_FUNCTIONS(JobListViewItem)
 public:
 
-    JobListViewItem( QTreeWidget* parent, const Job& job );
+    JobListViewItem(QTreeWidget* parent, const Job& job);
 
     const Job& job() const { return mJob; }
 
-    void updateText( const Job& job);
+    void updateText(const Job& job);
 
     void updateFileName();
 
@@ -64,23 +63,23 @@ class JobListView :public QTreeWidget
 
 public:
 
-    JobListView( const HostInfoManager* manager, QWidget* parent, const char* name = 0 );
+    JobListView(const HostInfoManager* manager, QWidget* parent, const char* name = 0);
 
-    void update( const Job& job );
+    void update(const Job& job);
 
     int numberOfFilePathParts() const;
-    void setNumberOfFilePathParts( int number );
+    void setNumberOfFilePathParts(int number);
 
     bool isClientColumnVisible() const;
-    void setClientColumnVisible( bool visible );
+    void setClientColumnVisible(bool visible);
 
     bool isServerColumnVisible() const;
-    void setServerColumnVisible( bool visible );
+    void setServerColumnVisible(bool visible);
 
     int expireDuration() const;
-    void setExpireDuration( int duration );
+    void setExpireDuration(int duration);
 
-    const HostInfoManager* hostInfoManager() const { return mHostInfoManager; }
+    const HostInfoManager* hostInfoManager() const { return m_hostInfoManager; }
 
     virtual void clear();
 
@@ -90,14 +89,14 @@ private slots:
 
 private:
 
-    void expireItem( JobListViewItem* item );
+    void expireItem(JobListViewItem* item);
 
-    void removeItem( JobListViewItem* item );
+    void removeItem(JobListViewItem* item);
 
-    const HostInfoManager* mHostInfoManager;
+    const HostInfoManager* m_hostInfoManager;
 
     typedef QMap<unsigned int, JobListViewItem*> ItemMap;
-    ItemMap mItems;
+    ItemMap m_items;
 
     /**
      * Number of parts (directories) of the file path which should be displayed.
@@ -107,7 +106,7 @@ private:
      *    the complete file path is displayed else .../partN/.../part1/fileName.
      * Default is 2.
      */
-    int mNumberOfFilePathParts;
+    int m_numberOfFilePathParts;
 
     /**
      * The number of seconds after which finished jobs should be expired.
@@ -116,13 +115,13 @@ private:
      * -  > 0 after some seconds.
      * Default is -1.
      */
-    int mExpireDuration;
+    int m_expireDuration;
 
-    QTimer* mExpireTimer;
+    QTimer* m_expireTimer;
 
     typedef QPair<uint, JobListViewItem*> FinishedJob;
     typedef QLinkedList<FinishedJob> FinishedJobs;
-    FinishedJobs mFinishedJobs;
+    FinishedJobs m_finishedJobs;
 };
 
 
