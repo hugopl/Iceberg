@@ -1,14 +1,13 @@
 find_package(Icecream REQUIRED)
 
-add_definitions (${QT_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
+add_definitions (${QT_DEFINITIONS} )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${LIBICECREAM_INCLUDE_DIR}
                     ${QT_INCLUDE_DIR}
                     ${QT_QTCORE_INCLUDE_DIR}
                     ${QT_QTGUI_INCLUDE_DIR}
-                    ${QT_QTNETWORK_INCLUDE_DIR}
-                    ${QT_QT3SUPPORT_INCLUDE_DIR})
+                    ${QT_QTNETWORK_INCLUDE_DIR})
 
 set(iceberg_SRCS
   main.cpp
@@ -28,7 +27,7 @@ qt4_automoc(${iceberg_SRCS})
 qt4_add_resources(iceberg_RCC icons.qrc)
 add_executable(iceberg ${iceberg_SRCS} ${iceberg_RCC})
 
-target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${CMAKE_DL_LIBS})
 
 ########### install files ###############
 

@@ -18,7 +18,6 @@ iceberg:addQtResource("icons.qrc")
 iceberg:usePackage(qtCore)
 iceberg:usePackage(qtGui)
 iceberg:usePackage(qtNetwork)
-iceberg:usePackage(qt3Support)
 iceberg:usePackage(icecc)
 iceberg:useQtAutomoc()
 

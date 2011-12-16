@@ -2,6 +2,7 @@
     This file is part of Icecream.
 
     Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2011 Luis Gabriel Lima <lampih@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,30 +24,28 @@
 
 #include "hostinfo.h"
 
-#include <QPalette>
-#include <Q3ListView>
-#include <QTimer>
+#include <QTreeWidget>
 
-class HostListViewItem : public Q3ListViewItem
+class HostListViewItem : public QTreeWidgetItem
 {
 public:
-    HostListViewItem(Q3ListView* parent, const HostInfo& info);
+    HostListViewItem(QTreeWidget* parent, const HostInfo& info);
 
     const HostInfo& hostInfo() const;
     void setActiveNode(bool active);
     void updateText(const HostInfo& info);
 
-    virtual int compare(Q3ListViewItem* i, int col, bool ascending) const;
-    virtual void paintCell(QPainter* painter, const QColorGroup& cg, int column, int width, int align);
-    virtual int width(const QFontMetrics& fm, const Q3ListView* lv, int column) const;
+    virtual bool operator<(const QTreeWidgetItem& item) const;
 
 private:
+    void updateFont(int column, bool bold);
+
     HostInfo m_hostInfo;
     bool m_active;
 };
 
 
-class HostListView : public Q3ListView
+class HostListView : public QTreeWidget
 {
     Q_OBJECT
 
@@ -64,8 +63,7 @@ signals:
     void nodeActivated(unsigned int hostid);
 
 private slots:
-    void slotNodeActivated(Q3ListViewItem* item);
-    void updateSort();
+    void slotNodeActivated(QTreeWidgetItem* item);
 
 private:
     void setActiveNode(unsigned int hostid, bool active);
@@ -75,8 +73,6 @@ private:
 
     typedef QMap<unsigned int, HostListViewItem*> ItemMap;
     ItemMap m_items;
-
-    QTimer m_updateSortTimer;
 };
 
 
