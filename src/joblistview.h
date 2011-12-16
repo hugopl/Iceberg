@@ -49,7 +49,7 @@ public:
 
     void updateFileName();
 
-    virtual int compare( QTreeWidgetItem* item, int column, bool ascending ) const;
+    bool operator< (const QTreeWidgetItem &item) const;
 
 private:
 

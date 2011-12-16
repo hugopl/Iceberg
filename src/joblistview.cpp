@@ -118,49 +118,31 @@ void JobListViewItem::updateFileName()
     setText(JobColumnFilename, fileName);
 }
 
-
-inline int compare(unsigned int i1, unsigned int i2)
+bool JobListViewItem::operator<(const QTreeWidgetItem &item) const
 {
-    if (i1 < i2)
-        return -1;
-    else if (i1 == i2)
-        return 0;
-    else
-        return 1;
-}
+    const JobListViewItem* thisItem = this;
+    const JobListViewItem* otherItem = dynamic_cast<const JobListViewItem*>(&item);
 
-
-int JobListViewItem::compare(QTreeWidgetItem* item,
-                              int column,
-                              bool) const
-{
-    const JobListViewItem* first = this;
-    const JobListViewItem* other = dynamic_cast<JobListViewItem*>(item);
-
-    // Workaround a Qt4 regression: before the item creation is complete
-    // compare() is called (insertItem() -> firstChild() -> enforceSortOrder())
-    if (!other)
-        return 0;
+    const int column = (treeWidget() ? treeWidget()->sortColumn() : 0);
 
     switch (column)
     {
     case JobColumnID:
-        return ::compare(first->mJob.jobId(), other->mJob.jobId());
+        return thisItem->mJob.jobId() < otherItem->mJob.jobId();
     case JobColumnReal:
-        return ::compare(first->mJob.real_msec, other->mJob.real_msec);
+        return thisItem->mJob.real_msec < otherItem->mJob.real_msec;
     case JobColumnUser:
-        return ::compare(first->mJob.user_msec, other->mJob.user_msec);
+        return thisItem->mJob.user_msec < otherItem->mJob.user_msec;
     case JobColumnFaults:
-        return ::compare(first->mJob.pfaults, other->mJob.pfaults);
+        return thisItem->mJob.pfaults < otherItem->mJob.pfaults;
     case JobColumnSizeIn:
-        return ::compare(first->mJob.in_uncompressed, other->mJob.in_uncompressed);
+        return thisItem->mJob.in_uncompressed < otherItem->mJob.in_uncompressed;
     case JobColumnSizeOut:
-        return ::compare(first->mJob.out_uncompressed, other->mJob.out_uncompressed);
+        return thisItem->mJob.out_uncompressed < otherItem->mJob.out_uncompressed;
     default:
-        return first->text(column).compare(other->text(column));
+        return (QTreeWidgetItem::operator<(item));
     }
 }
-
 
 JobListView::JobListView(const HostInfoManager* manager,
                           QWidget* parent,
