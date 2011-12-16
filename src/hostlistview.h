@@ -24,7 +24,6 @@
 #include "hostinfo.h"
 
 #include <QTreeWidget>
-#include <QTimer>
 
 class HostListViewItem : public QTreeWidgetItem
 {
@@ -64,7 +63,6 @@ signals:
 
 private slots:
     void slotNodeActivated(QTreeWidgetItem* item);
-    void updateSort();
 
 private:
     void setActiveNode(unsigned int hostid, bool active);
@@ -74,8 +72,6 @@ private:
 
     typedef QMap<unsigned int, HostListViewItem*> ItemMap;
     ItemMap m_items;
-
-    QTimer m_updateSortTimer;
 };
 
 

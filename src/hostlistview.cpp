@@ -134,10 +134,11 @@ HostListView::HostListView(HostInfoManager* manager, QWidget* parent)
     headerView->setStretchLastSection(false);
 
     setAllColumnsShowFocus(true);
+    sortByColumn(ColumnID, Qt::AscendingOrder);
+    setSortingEnabled(true);
 
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
             this, SLOT(slotNodeActivated(QTreeWidgetItem*)));
-    connect(&m_updateSortTimer, SIGNAL(timeout()), SLOT(updateSort()));
 }
 
 
@@ -173,9 +174,6 @@ void HostListView::checkNode(unsigned int hostid)
     }
     else
         (*it)->updateText(*info);
-
-    m_updateSortTimer.setSingleShot(true);
-    m_updateSortTimer.start(0);
 }
 
 
@@ -215,10 +213,5 @@ void HostListView::setActiveNode(unsigned int hostid, bool active)
         (*it)->setActiveNode(active);
 }
 
-void HostListView::updateSort()
-{
-    if(sortColumn() != 0)
-        sortItems(sortColumn(), Qt::AscendingOrder);
-}
 
 #include "hostlistview.moc"
