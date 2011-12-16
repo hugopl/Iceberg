@@ -22,8 +22,6 @@
 #include "hostlistview.h"
 
 #include <QLocale>
-#include <QFontMetrics>
-#include <QPainter>
 #include <QApplication>
 
 enum Columns
@@ -54,10 +52,25 @@ const HostInfo& HostListViewItem::hostInfo() const
 }
 
 
+void HostListViewItem::updateFont(int column, bool bold)
+{
+    QFont oldFont = font(column);
+    oldFont.setBold(bold);
+    setFont(column, oldFont);
+}
+
+
 void HostListViewItem::setActiveNode(bool active)
 {
     m_active = active;
-    //repaint();
+    updateFont(ColumnID, active);
+    updateFont(ColumnName, active);
+    updateFont(ColumnColor, active);
+    updateFont(ColumnIP, active);
+    updateFont(ColumnPlatform, active);
+    updateFont(ColumnMaxJobs, active);
+    updateFont(ColumnSpeed, active);
+    updateFont(ColumnLoad, active);
 }
 
 
@@ -92,38 +105,6 @@ bool HostListViewItem::operator<(const QTreeWidgetItem& item) const
     default:
         return text(col) < other->text(col);
     }
-}
-
-
-void HostListViewItem::paintCell(QPainter* painter, const QColorGroup& cg,
-                                  int column, int width, int align)
-{
-    const QFont oldFont(painter->font());
-
-    if (m_active) {
-        QFont font(oldFont);
-        font.setBold(true);
-        painter->setFont(font);
-    }
-
-    //QTreeWidgetItem::paintCell(painter, cg, column, width, align);
-    painter->setFont(oldFont);
-}
-
-
-int HostListViewItem::width(const QFontMetrics& fm, const QTreeWidget* lv, int column) const
-{
-    int width = 0;
-    if (m_active) {
-        QFont font(lv->font());
-        font.setBold(true);
-        const QFontMetrics metrics(font);
-        width = metrics.width(text(column)) + /*lv->itemMargin()*/ 0 * 2 + 2;
-    } else {
-        //width = QTreeWidgetItem::width(fm, lv, column);
-    }
-
-    return width;
 }
 
 

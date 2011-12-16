@@ -23,7 +23,6 @@
 
 #include "hostinfo.h"
 
-#include <QPalette>
 #include <QTreeWidget>
 #include <QTimer>
 
@@ -38,11 +37,9 @@ public:
 
     virtual bool operator<(const QTreeWidgetItem& item) const;
 
-    // XXX
-    virtual void paintCell(QPainter* painter, const QColorGroup& cg, int column, int width, int align);
-    virtual int width(const QFontMetrics& fm, const QTreeWidget* lv, int column) const;
-
 private:
+    void updateFont(int column, bool bold);
+
     HostInfo m_hostInfo;
     bool m_active;
 };
