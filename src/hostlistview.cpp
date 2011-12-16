@@ -22,6 +22,7 @@
 #include "hostlistview.h"
 
 #include <QLocale>
+#include <QHeaderView>
 #include <QApplication>
 
 enum Columns
@@ -85,6 +86,11 @@ void HostListViewItem::updateText(const HostInfo& info)
     setText(ColumnMaxJobs, QString::number(info.maxJobs()));
     setText(ColumnSpeed, QLocale::c().toString(info.serverSpeed()));
     setText(ColumnLoad, QString::number(info.serverLoad()));
+
+    setTextAlignment(ColumnID, Qt::AlignRight);
+    setTextAlignment(ColumnMaxJobs, Qt::AlignRight);
+    setTextAlignment(ColumnSpeed, Qt::AlignRight);
+    setTextAlignment(ColumnLoad, Qt::AlignRight);
 }
 
 
@@ -120,10 +126,12 @@ HostListView::HostListView(HostInfoManager* manager, QWidget* parent)
             << tr("Max Jobs") << tr("Speed") << tr("Load");
     setHeaderLabels(headers);
 
-    /*setColumnAlignment(ColumnID, Qt::AlignRight);
-    setColumnAlignment(ColumnMaxJobs, Qt::AlignRight);
-    setColumnAlignment(ColumnSpeed, Qt::AlignRight);
-    setColumnAlignment(ColumnLoad, Qt::AlignRight);*/
+    QHeaderView* headerView = header();
+    headerView->setResizeMode(ColumnID, QHeaderView::ResizeToContents);
+    headerView->setResizeMode(ColumnMaxJobs, QHeaderView::ResizeToContents);
+    headerView->setResizeMode(ColumnSpeed, QHeaderView::ResizeToContents);
+    headerView->setResizeMode(ColumnLoad, QHeaderView::ResizeToContents);
+    headerView->setStretchLastSection(false);
 
     setAllColumnsShowFocus(true);
 
