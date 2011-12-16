@@ -27,7 +27,7 @@
 
 #include "job.h"
 
-#include <Q3ListView>
+#include <QTreeWidget>
 #include <QPair>
 #include <QLinkedList>
 
@@ -37,12 +37,12 @@ class HostInfoManager;
 class QTimer;
 
 
-class JobListViewItem : public Q3ListViewItem
+class JobListViewItem : public QTreeWidgetItem
 {
     Q_DECLARE_TR_FUNCTIONS(JobListViewItem)
 public:
 
-    JobListViewItem( Q3ListView* parent, const Job& job );
+    JobListViewItem( QTreeWidget* parent, const Job& job );
 
     const Job& job() const { return mJob; }
 
@@ -50,7 +50,7 @@ public:
 
     void updateFileName();
 
-    virtual int compare( Q3ListViewItem* item, int column, bool ascending ) const;
+    virtual int compare( QTreeWidgetItem* item, int column, bool ascending ) const;
 
 private:
 
@@ -58,7 +58,7 @@ private:
 };
 
 
-class JobListView :public Q3ListView
+class JobListView :public QTreeWidget
 {
     Q_OBJECT
 

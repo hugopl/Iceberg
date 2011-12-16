@@ -5,6 +5,7 @@
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2004, 2005 Andre Wöbbeking <Woebbeking@web.de>
     Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
+    Copyright (c) 2011 Anselmo L. S. Melo <anselmolsm@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QTimer>
-
+#include <QApplication>
 
 enum JobJobColumns
 {
@@ -44,8 +45,8 @@ enum JobJobColumns
 };
 
 
-JobListViewItem::JobListViewItem( Q3ListView* parent, const Job& job )
-    :  Q3ListViewItem( parent )
+JobListViewItem::JobListViewItem( QTreeWidget* parent, const Job& job )
+    :  QTreeWidgetItem( parent )
 {
     updateText( job );
 }
@@ -58,7 +59,7 @@ void JobListViewItem::updateText( const Job& job)
     mJob = job;
 
     setText( JobColumnID, QString::number( job.jobId() ) );
-    if ( JobListView* view = dynamic_cast<JobListView*>( listView() ) )
+    if ( JobListView* view = dynamic_cast<JobListView*>( treeWidget() ) )
     {
         setText( JobColumnClient, view->hostInfoManager()->nameForHost( job.client() ) );
         if ( job.server() )
@@ -80,7 +81,7 @@ void JobListViewItem::updateText( const Job& job)
 
 void JobListViewItem::updateFileName()
 {
-    JobListView* view = dynamic_cast<JobListView*>( listView() );
+    JobListView* view = dynamic_cast<JobListView*>( treeWidget() );
     if ( !view )
         return;
 
@@ -122,7 +123,7 @@ inline int compare( unsigned int i1, unsigned int i2 )
 }
 
 
-int JobListViewItem::compare( Q3ListViewItem* item,
+int JobListViewItem::compare( QTreeWidgetItem* item,
                               int column,
                               bool ) const
 {
@@ -157,33 +158,29 @@ int JobListViewItem::compare( Q3ListViewItem* item,
 JobListView::JobListView( const HostInfoManager* manager,
                           QWidget* parent,
                           const char* name )
-    : Q3ListView( parent, name ),
+    : QTreeWidget( parent ),
       mHostInfoManager( manager ),
       mNumberOfFilePathParts( 2 ),
       mExpireDuration( -1 ),
       mExpireTimer( new QTimer( this ) )
 {
-    addColumn( tr( "ID" ) );
-    addColumn( tr( "Filename" ) );
-    addColumn( tr( "Client" ) );
-    addColumn( tr( "Server" ) );
-    addColumn( tr( "State" ) );
-    addColumn( tr( "Real" ) );
-    addColumn( tr( "User" ) );
-    addColumn( tr( "Faults" ) );
-    addColumn( tr( "Size In" ) );
-    addColumn( tr( "Size Out" ) );
+    setObjectName( QLatin1String( name ) );
+    qApp->setStyleSheet("QTreeView::branch { border-image: none; image: none }");
 
-    setColumnAlignment( JobColumnID, Qt::AlignRight );
-    setColumnAlignment( JobColumnReal, Qt::AlignRight );
-    setColumnAlignment( JobColumnUser, Qt::AlignRight );
-    setColumnAlignment( JobColumnFaults, Qt::AlignRight );
-    setColumnAlignment( JobColumnSizeIn, Qt::AlignRight );
-    setColumnAlignment( JobColumnSizeOut, Qt::AlignRight );
+    QStringList headers;
+    headers << tr("ID") << tr("Filename") << tr("Client") << tr("Server")
+            << tr("State") << tr("Real") << tr("User") << tr("Faults")
+            << tr("Size In") << tr("Size Out");
+
+    setHeaderLabels(headers);
+    const int nHeaders = headers.count();
+    setColumnCount(nHeaders);
+
 
     setAllColumnsShowFocus(true);
 
-    setSorting( JobColumnID, false );
+    setSortingEnabled(true);
+    sortByColumn(JobColumnID, Qt::DescendingOrder);
 
     connect(mExpireTimer, SIGNAL( timeout() ),
             this, SLOT( slotExpireFinishedJobs() ) );
@@ -237,12 +234,10 @@ void JobListView::setClientColumnVisible( bool visible )
 
     if ( visible )
     {
-        setColumnWidthMode( JobColumnClient, Maximum );
         setColumnWidth( JobColumnClient, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( JobColumnClient, Manual );
         setColumnWidth( JobColumnClient, 0 );
     }
 }
@@ -261,12 +256,10 @@ void JobListView::setServerColumnVisible( bool visible )
 
     if ( visible )
     {
-        setColumnWidthMode( JobColumnServer, Maximum );
         setColumnWidth( JobColumnServer, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( JobColumnServer, Manual );
         setColumnWidth( JobColumnServer, 0 );
     }
 }
@@ -291,7 +284,7 @@ void JobListView::clear()
     mItems.clear();
     mFinishedJobs.clear();
 
-    Q3ListView::clear();
+    QTreeWidget::clear();
 }
 
 
