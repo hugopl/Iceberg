@@ -23,27 +23,39 @@
 
 #include "job.h"
 
+Job::Job(unsigned int id, unsigned int client, const QString &filename, const QString &lang)
+    : m_id(id),
+      m_fileName(filename),
+      m_lang(lang),
+      m_client(client),
+      m_server(0)
+{
+    real_msec = 0;
+    user_msec = 0;
+    sys_msec = 0;
+    pfaults = 0;
+    exitcode = 0;
+    in_compressed = 0;
+    in_uncompressed = 0;
+    out_compressed = 0;
+    out_uncompressed = 0;
+}
+
 QString Job::stateAsString() const
 {
-    switch ( m_state ) {
+    switch (m_state) {
     case WaitingForCS:
-        return tr( "Waiting" );
-        break;
+        return tr("Waiting");
     case Compiling:
-        return tr( "Compiling" );
-        break;
+        return tr("Compiling");
     case Finished:
-        return tr( "Finished" );
-        break;
+        return tr("Finished");
     case Failed:
-        return tr( "Failed" );
-        break;
+        return tr("Failed");
     case Idle:
-        return tr( "Idle" );
-        break;
+        return tr("Idle");
     case LocalOnly:
-        return tr( "LocalOnly" );
-        break;
+        return tr("LocalOnly");
     }
     return QString();
 }
