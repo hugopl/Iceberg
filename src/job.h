@@ -30,61 +30,39 @@
 
 class Job
 {
-Q_DECLARE_TR_FUNCTIONS(Job)
+    Q_DECLARE_TR_FUNCTIONS(Job)
 
-  public:
-    enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
-    explicit Job(unsigned int id = 0,
-        unsigned int client = 0,
-        const QString &filename = QString(),
-        const QString &lang = QString())
-    {
-        m_id = id;
-        m_fileName = filename;
-        m_lang = lang;
-        m_state = WaitingForCS;
-        m_client = client;
-        real_msec = 0;
-        user_msec = 0;
-        sys_msec = 0;
-        pfaults = 0;
-        exitcode = 0;
-        m_server = 0;
-        in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
-    }
+public:
+    Job(unsigned int id = 0, unsigned int client = 0,
+        const QString &filename = QString(), const QString &lang = QString());
 
-    bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
-    bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
-    int operator<( const Job &rhs ) const{ return m_id < rhs.m_id; }
+    enum State {
+        WaitingForCS,
+        LocalOnly,
+        Compiling,
+        Finished,
+        Failed,
+        Idle
+    };
+
+    bool operator==(const Job &rhs) const { return m_id == rhs.m_id; }
+    bool operator!=(const Job &rhs) const { return m_id != rhs.m_id; }
+    int operator<(const Job &rhs) const { return m_id < rhs.m_id; }
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }
     unsigned int client() const { return m_client; }
-    unsigned int server() const { return m_server; }
-    State state() const { return m_state; }
     QString stateAsString() const;
+
+    unsigned int server() const { return m_server; }
+    void setServer(unsigned int hostid) { m_server = hostid; }
+
     time_t stime() const { return m_stime; }
+    void setStartTime(time_t t) { m_stime = t; }
 
-    void setServer( unsigned int hostid ) {
-        m_server = hostid;
-    }
-    void setStartTime( time_t t ) {
-        m_stime = t;
-    }
-    void setState( State s ) {
-        m_state = s;
-    }
+    State state() const { return m_state; }
+    void setState(State s) { m_state = s; }
 
-  private:
-    unsigned int m_id;
-    QString m_fileName;
-    unsigned int m_server;
-    unsigned int m_client;
-    QString m_lang;
-    State m_state;
-    time_t m_stime;
-
-  public:
     unsigned int real_msec;  /* real time it used */
     unsigned int user_msec;  /* user time used */
     unsigned int sys_msec;   /* system time used */
@@ -96,19 +74,27 @@ Q_DECLARE_TR_FUNCTIONS(Job)
     unsigned int in_uncompressed;
     unsigned int out_compressed;
     unsigned int out_uncompressed;
+
+private:
+    unsigned int m_id;
+    QString m_fileName;
+    unsigned int m_server;
+    unsigned int m_client;
+    QString m_lang;
+    State m_state;
+    time_t m_stime;
 };
 
 class IdleJob : public Job
 {
   public:
-    IdleJob() : Job() { setState( Job::Idle ); }
+    IdleJob() : Job() { setState(Job::Idle); }
 };
 
 class JobList : public QMap<unsigned int, Job>
 {
   public:
-    JobList() {}
+    JobList() { }
 };
 
 #endif
-// vim:ts=4:sw=4:noet
