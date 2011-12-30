@@ -458,9 +458,7 @@ bool StarView::event (QEvent* e)
                            "<tr><td>" + tr("IP:") + "</td><td>" + hostInfo->ip()
                            + "</td></tr>" +
                            "<tr><td>" + tr("Platform:") + "</td><td>" +
-                           hostInfo->platform() + "</td></tr>"
-                           "<tr><td>" + tr("Flavor:") + "</td><td>" +
-                           HostInfo::colorName(hostInfo->color()) + "</td></tr>" +
+                           hostInfo->platform() + "</td></tr>" +
                            "<tr><td>" + tr("Id:") + "</td><td>" +
                            QString::number(hostInfo->id()) + "</td></tr>" +
                            "<tr><td>" + tr("Speed:") + "</td><td>" +

@@ -45,16 +45,6 @@ public:
 
     typedef QMap<QString,QString> StatsMap;
     void updateFromStatsMap(const StatsMap& stats);
-
-    static void initColorTable();
-    static QString colorName(const QColor& color);
-
-protected:
-    static void initColor(const QString& value, const QString& name);
-
-    QColor createColor();
-    QColor createColor(const QString& name);
-
 private:
     unsigned int m_id;
     QString m_name;
@@ -65,9 +55,6 @@ private:
     bool m_offline;
     float m_serverSpeed;
     unsigned int m_serverLoad;
-
-    static QVector<QColor> m_colorTable;
-    static QMap<int,QString> m_colorNameMap;
 };
 
 class HostInfoManager

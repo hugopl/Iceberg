@@ -30,7 +30,7 @@ enum Columns
 {
     ColumnID,
     ColumnName,
-    ColumnColor,
+//    ColumnColor,
     ColumnIP,
     ColumnPlatform,
     ColumnMaxJobs,
@@ -67,7 +67,7 @@ void HostListViewItem::setActiveNode(bool active)
     m_active = active;
     updateFont(ColumnID, active);
     updateFont(ColumnName, active);
-    updateFont(ColumnColor, active);
+//    updateFont(ColumnColor, active);
     updateFont(ColumnIP, active);
     updateFont(ColumnPlatform, active);
     updateFont(ColumnMaxJobs, active);
@@ -81,7 +81,7 @@ void HostListViewItem::updateText(const HostInfo& info)
     m_hostInfo = info;
     setText(ColumnID, QString::number(info.id()));
     setText(ColumnName, info.name());
-    setText(ColumnColor, HostInfo::colorName(info.color()));
+//    setText(ColumnColor, HostInfo::colorName(info.color()));
     setText(ColumnIP, info.ip());
     setText(ColumnPlatform, info.platform());
     setText(ColumnMaxJobs, QString::number(info.maxJobs()));
@@ -123,7 +123,7 @@ HostListView::HostListView(HostInfoManager* manager, QWidget* parent)
     qApp->setStyleSheet("QTreeView::branch { border-image: none; image: none }");
 
     QStringList headers;
-    headers << tr("ID") << tr("Name") << tr("Color") << tr("IP") << tr("Platform")
+    headers << tr("ID") << tr("Name") << tr("IP") << tr("Platform")
             << tr("Max Jobs") << tr("Speed") << tr("Load");
     setHeaderLabels(headers);
 
