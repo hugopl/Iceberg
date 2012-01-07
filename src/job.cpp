@@ -5,6 +5,7 @@
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
     Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
+    Copyright (c) 2012 Luis Gabriel Lima <lampih@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,22 +24,24 @@
 
 #include "job.h"
 
-Job::Job(unsigned int id, unsigned int client, const QString &filename, const QString &lang)
+Job::Job(quint32 id, quint32 client, const QString &filename, const QString &lang)
     : m_id(id),
       m_fileName(filename),
-      m_lang(lang),
+      m_server(0),
       m_client(client),
-      m_server(0)
+      m_lang(lang),
+      m_state(WaitingForCS),
+      m_startTime(QDateTime()),
+      m_realTime(0),
+      m_userTime(0),
+      m_systemTime(0),
+      m_pageFaults(0),
+      m_exitCode(0),
+      m_compressedInputSize(0),
+      m_inputSize(0),
+      m_compressedOutputSize(0),
+      m_outputSize(0)
 {
-    real_msec = 0;
-    user_msec = 0;
-    sys_msec = 0;
-    pfaults = 0;
-    exitcode = 0;
-    in_compressed = 0;
-    in_uncompressed = 0;
-    out_compressed = 0;
-    out_uncompressed = 0;
 }
 
 QString Job::stateAsString() const
@@ -58,4 +61,20 @@ QString Job::stateAsString() const
         return tr("LocalOnly");
     }
     return QString();
+}
+
+void Job::setExecInfo(quint32 real, quint32 user, quint32 sys, quint32 pf)
+{
+    m_realTime = real;
+    m_userTime = user;
+    m_systemTime = sys;
+    m_pageFaults = pf;
+}
+
+void Job::setSizes(quint32 compIn, quint32 in, quint32 compOut, quint32 out)
+{
+    m_compressedInputSize = compIn;
+    m_inputSize = in;
+    m_compressedOutputSize = compOut;
+    m_outputSize = out;
 }

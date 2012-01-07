@@ -73,11 +73,11 @@ void JobListViewItem::updateText(const Job& job)
             setText(JobColumnServer, QString());
     }
     setText(JobColumnState, job.stateAsString());
-    setText(JobColumnReal, QString::number(job.real_msec));
-    setText(JobColumnUser, QString::number(job.user_msec));
-    setText(JobColumnFaults, QString::number(job.pfaults));
-    setText(JobColumnSizeIn, tr("%1 KiB").arg(QString::number(job.in_uncompressed/1024, 'g', 2)));
-    setText(JobColumnSizeOut, tr("%1 KiB").arg(QString::number(job.out_uncompressed/1024, 'g', 2)));
+    setText(JobColumnReal, QString::number(job.realTime()));
+    setText(JobColumnUser, QString::number(job.userTime()));
+    setText(JobColumnFaults, QString::number(job.pageFaults()));
+    setText(JobColumnSizeIn, tr("%1 KiB").arg(QString::number(job.inputSize()/1024, 'g', 2)));
+    setText(JobColumnSizeOut, tr("%1 KiB").arg(QString::number(job.outputSize()/1024, 'g', 2)));
 
     if (fileNameChanged)
         updateFileName();
@@ -112,24 +112,23 @@ void JobListViewItem::updateFileName()
 
 bool JobListViewItem::operator<(const QTreeWidgetItem &item) const
 {
-    const JobListViewItem* thisItem = this;
-    const JobListViewItem* otherItem = dynamic_cast<const JobListViewItem*>(&item);
+    const Job& otherJob = dynamic_cast<const JobListViewItem*>(&item)->job();
 
     const int column = (treeWidget() ? treeWidget()->sortColumn() : 0);
 
     switch (column) {
     case JobColumnID:
-        return thisItem->m_job.jobId() < otherItem->m_job.jobId();
+        return m_job.jobId() < otherJob.jobId();
     case JobColumnReal:
-        return thisItem->m_job.real_msec < otherItem->m_job.real_msec;
+        return m_job.realTime() < otherJob.realTime();
     case JobColumnUser:
-        return thisItem->m_job.user_msec < otherItem->m_job.user_msec;
+        return m_job.userTime() < otherJob.userTime();
     case JobColumnFaults:
-        return thisItem->m_job.pfaults < otherItem->m_job.pfaults;
+        return m_job.pageFaults() < otherJob.pageFaults();
     case JobColumnSizeIn:
-        return thisItem->m_job.in_uncompressed < otherItem->m_job.in_uncompressed;
+        return m_job.inputSize() < otherJob.inputSize();
     case JobColumnSizeOut:
-        return thisItem->m_job.out_uncompressed < otherItem->m_job.out_uncompressed;
+        return m_job.outputSize() < otherJob.outputSize();
     default:
         return (QTreeWidgetItem::operator<(item));
     }

@@ -161,7 +161,7 @@ void Monitor::msgReceived()
 
 bool Monitor::handleActivity()
 {
-    Msg *m = m_scheduler->get_msg ();
+    Msg *m = m_scheduler->get_msg();
     if (!m) {
         checkScheduler(true);
         setSchedulerState(false);
@@ -233,7 +233,7 @@ void Monitor::handleLocalDone(Msg* _m)
         return;
     }
 
-    (*it).setState(Job::Finished);
+    it->setState(Job::Finished);
     m_view->update(*it);
 
     if (m_rememberedJobs.size() > 3000) { // now remove 1000
@@ -280,9 +280,9 @@ void Monitor::handleJobBegin(Msg* _m)
         return;
     }
 
-    (*it).setServer(m->hostid);
-    (*it).setStartTime(m->stime);
-    (*it).setState(Job::Compiling);
+    it->setServer(m->hostid);
+    it->setStartTime(QDateTime::fromTime_t(m->stime));
+    it->setState(Job::Compiling);
 
     m_view->update(*it);
 }
@@ -299,20 +299,14 @@ void Monitor::handleJobDone(Msg* _m)
         return;
     }
 
-    (*it).exitcode = m->exitcode;
+    it->setExitCode(m->exitcode);
     if (m->exitcode) {
-        (*it).setState(Job::Failed);
+        it->setState(Job::Failed);
     } else {
-        (*it).setState(Job::Finished);
-        (*it).real_msec = m->real_msec;
-        (*it).user_msec = m->user_msec;
-        (*it).sys_msec = m->sys_msec;   /* system time used */
-        (*it).pfaults = m->pfaults;     /* page faults */
-
-        (*it).in_compressed = m->in_compressed;
-        (*it).in_uncompressed = m->in_uncompressed;
-        (*it).out_compressed = m->out_compressed;
-        (*it).out_uncompressed = m->out_uncompressed;
+        it->setState(Job::Finished);
+        it->setExecInfo(m->real_msec, m->user_msec, m->sys_msec, m->pfaults);
+        it->setSizes(m->in_compressed, m->in_uncompressed,
+                     m->out_compressed, m->out_uncompressed);
     }
 
     m_view->update(*it);
