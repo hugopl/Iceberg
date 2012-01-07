@@ -80,7 +80,15 @@ public:
     quint32 outputSize() const { return m_outputSize; }
     void setSizes(quint32 compIn, quint32 in, quint32 compOut, quint32 out);
 
+    QString formattedRealTime() const { return formatTime(m_realTime); }
+    QString formattedUserTime() const { return formatTime(m_userTime); }
+    QString formattedInputSize() const { return formatSize(m_inputSize); }
+    QString formattedOutputSize() const { return formatSize(m_outputSize); }
+
 private:
+    static QString formatTime(quint32 time);
+    static QString formatSize(quint32 size);
+
     quint32 m_id;
     QString m_fileName;
     quint32 m_server;

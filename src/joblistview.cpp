@@ -73,11 +73,11 @@ void JobListViewItem::updateText(const Job& job)
             setText(JobColumnServer, QString());
     }
     setText(JobColumnState, job.stateAsString());
-    setText(JobColumnReal, QString::number(job.realTime()));
-    setText(JobColumnUser, QString::number(job.userTime()));
+    setText(JobColumnReal, job.formattedRealTime());
+    setText(JobColumnUser, job.formattedUserTime());
     setText(JobColumnFaults, QString::number(job.pageFaults()));
-    setText(JobColumnSizeIn, tr("%1 KiB").arg(QString::number(job.inputSize()/1024, 'g', 2)));
-    setText(JobColumnSizeOut, tr("%1 KiB").arg(QString::number(job.outputSize()/1024, 'g', 2)));
+    setText(JobColumnSizeIn, job.formattedInputSize());
+    setText(JobColumnSizeOut, job.formattedOutputSize());
 
     if (fileNameChanged)
         updateFileName();

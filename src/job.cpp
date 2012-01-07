@@ -24,6 +24,8 @@
 
 #include "job.h"
 
+#include <QObject>
+
 Job::Job(quint32 id, quint32 client, const QString &filename, const QString &lang)
     : m_id(id),
       m_fileName(filename),
@@ -77,4 +79,19 @@ void Job::setSizes(quint32 compIn, quint32 in, quint32 compOut, quint32 out)
     m_inputSize = in;
     m_compressedOutputSize = compOut;
     m_outputSize = out;
+}
+
+QString Job::formatTime(quint32 time)
+{
+        return QObject::tr("%1 s").arg(QString::number(time/qreal(1000), 'f', 2));
+}
+
+QString Job::formatSize(quint32 size)
+{
+    if (size >= 1048576)
+        return QObject::tr("%1 MiB").arg(QString::number(size/qreal(1048576), 'f', 2));
+    else if (size >= 1024)
+        return QObject::tr("%1 KiB").arg(QString::number(size/qreal(1024), 'f', 2));
+    else
+        return QObject::tr("%1 B").arg(QString::number(size));
 }
