@@ -4,6 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2004 Cornelius Schumacher <schumacher@kde.org>
     Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
+    Copyright (c) 2012 Anselmo L. S. Melo <anselmolsm@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QDialogButtonBox>
+#include <QSettings>
 #include <QDebug>
 #include <cmath>
 
@@ -55,7 +57,10 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     QBoxLayout *nodesLayout = new QHBoxLayout();
     topLayout->addLayout(nodesLayout);
 
-    int nodesPerRing = 25;
+    QSettings settings;
+    const int nodesPerRing = settings.value("StarView/NodesPerRing", 25).toInt();
+    const QString archFilter = settings.value("StarView/ArchFilter", "").toString();
+    const bool supressDomainName = settings.value("StarView/SupressDomainName", false).toBool();
 
     m_nodesPerRingSlider = new QSlider(Qt::Horizontal, this);
     m_nodesPerRingSlider->setMinimum(1);
@@ -72,10 +77,12 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     label = new QLabel(tr("Architecture filter:"), this);
     topLayout->addWidget(label);
     m_archFilterEdit = new QLineEdit(this);
+    m_archFilterEdit->setText(archFilter);
     topLayout->addWidget(m_archFilterEdit);
     connect(m_archFilterEdit, SIGNAL(textChanged(const QString &)), SIGNAL(configChanged()));
 
     m_suppressDomainName = new QCheckBox(tr("Suppress domain name"), this);
+    m_suppressDomainName->setChecked(supressDomainName);
     topLayout->addWidget(m_suppressDomainName);
     connect(m_suppressDomainName, SIGNAL(toggled(bool)), SLOT(slotSuppressDomainName(bool)));
 
@@ -102,6 +109,11 @@ int StarViewConfigDialog::nodesPerRing()
 QString StarViewConfigDialog::archFilter()
 {
     return m_archFilterEdit->text();
+}
+
+bool StarViewConfigDialog::suppressDomainName() const
+{
+    return m_suppressDomainName;
 }
 
 void StarViewConfigDialog::slotSuppressDomainName(bool b)
@@ -499,6 +511,12 @@ void StarView::slotConfigChanged()
     }
 
     arrangeHostItems();
+
+    //write settings
+    QSettings settings;
+    settings.setValue("StarView/NodesPerRing", m_configDialog->nodesPerRing());
+    settings.setValue("StarView/ArchFilter", m_configDialog->archFilter());
+    settings.setValue("StarView/SupressDomainName", m_configDialog->suppressDomainName());
 }
 
 void StarView::arrangeHostItems()
