@@ -43,17 +43,16 @@ public:
 
     JobListViewItem(QTreeWidget* parent, const Job& job);
 
-    const Job& job() const { return mJob; }
+    const Job& job() const { return m_job; }
 
     void updateText(const Job& job);
 
     void updateFileName();
 
-    bool operator< (const QTreeWidgetItem &item) const;
+    bool operator<(const QTreeWidgetItem &item) const;
 
 private:
-
-    Job mJob;
+    Job m_job;
 };
 
 
@@ -62,7 +61,6 @@ class JobListView :public QTreeWidget
     Q_OBJECT
 
 public:
-
     JobListView(const HostInfoManager* manager, QWidget* parent, const char* name = 0);
 
     void update(const Job& job);
@@ -84,15 +82,11 @@ public:
     virtual void clear();
 
 private slots:
-
     void slotExpireFinishedJobs();
 
 private:
-
     void expireItem(JobListViewItem* item);
-
     void removeItem(JobListViewItem* item);
-
     const HostInfoManager* m_hostInfoManager;
 
     typedef QMap<unsigned int, JobListViewItem*> ItemMap;

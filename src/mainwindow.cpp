@@ -5,7 +5,7 @@
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
     Copyright (c) 2011 Hugo Parente Lima <hugo.pl@gmail.com>
-    Copyright (c) 2011 Anselmo L. S. Melo <anselmolsm@gmail.com>
+    Copyright (c) 2011, 2012 Anselmo L. S. Melo <anselmolsm@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,27 +80,38 @@ MainWindow::MainWindow(QWidget* parent)
     m_configView = viewMenu->addAction(tr("Configure View..."));
     connect(m_configView, SIGNAL(triggered()), this, SLOT( configureView()));
 
+    m_systrayAction = viewMenu->addAction(tr("System Tray"));
+    m_systrayAction->setCheckable(true);
+
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("About..."), this, SLOT(showAboutDialog()));
 
+    readSettings();
+
     // Avoid useless creation and connection if the system does not have a systray
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-        systemTrayIcon = new QSystemTrayIcon(this);
-        systemTrayIcon->setIcon(QIcon(":bigIcon.png"));
-        systemTrayIcon->show();
+        m_systemTrayIcon = new QSystemTrayIcon(this);
+        m_systemTrayIcon->setIcon(QIcon(":bigIcon.png"));
 
-        systemTrayMenu = new QMenu(this);
-        systemTrayMenu->addAction(quitAction);
+        m_systemTrayMenu = new QMenu(this);
+        m_systemTrayMenu->addAction(quitAction);
 
-        systemTrayIcon->setContextMenu(systemTrayMenu);
+        m_systemTrayIcon->setContextMenu(m_systemTrayMenu);
 
-        connect(systemTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+        connect(m_systemTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(systemTrayIconActivated(QSystemTrayIcon::ActivationReason)));
+
+        connect(m_systrayAction, SIGNAL(triggered(bool)), m_systemTrayIcon, SLOT(setVisible(bool)));
+
+        // Only show the systray if enabled
+        if (m_systrayAction->isChecked())
+            m_systemTrayIcon->show();
+    } else {
+        m_systrayAction->setEnabled(false);
     }
 
     setWindowIcon(QIcon(":bigIcon.png"));
 
-    readSettings();
     m_monitor->checkScheduler();
 }
 
@@ -128,6 +139,9 @@ void MainWindow::readSettings()
         m_starView->setChecked(true);
     }
 
+    bool systray = cfg.value("systray", false).toBool();
+    m_systrayAction->setChecked(systray);
+
     // "icecream" is the default netname used by iceccd
     if (m_monitor->currentNet().isEmpty()) {
         QByteArray netname = cfg.value("netname", "icecream").toByteArray();
@@ -151,6 +165,7 @@ void MainWindow::writeSettings()
     QSettings cfg;
     cfg.setValue("netname", m_monitor->currentNet());
     cfg.setValue("CurrentView", m_view->id());
+    cfg.setValue("systray", m_systrayAction->isChecked());
     cfg.setValue("geometry", this->geometry());
     cfg.sync();
 }
@@ -237,7 +252,7 @@ void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
             setVisible(!isVisible());
             break;
         case QSystemTrayIcon::Context:
-            systemTrayMenu->show();
+            m_systemTrayMenu->show();
             break;
         default:
             ;
@@ -246,8 +261,10 @@ void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    hide();
-    event->ignore();
+    if (m_systrayAction->isChecked()) {
+        hide();
+        event->ignore();
+    }
 }
 
 #include "mainwindow.moc"

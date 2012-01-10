@@ -61,13 +61,11 @@ JobListViewItem::JobListViewItem(QTreeWidget* parent, const Job& job)
 
 void JobListViewItem::updateText(const Job& job)
 {
-    const bool fileNameChanged(mJob.fileName() != job.fileName());
-
-    mJob = job;
+    const bool fileNameChanged(m_job.fileName() != job.fileName());
+    m_job = job;
 
     setText(JobColumnID, QString::number(job.jobId()));
-    if (JobListView* view = dynamic_cast<JobListView*>(treeWidget()))
-    {
+    if (JobListView* view = dynamic_cast<JobListView*>(treeWidget())) {
         setText(JobColumnClient, view->hostInfoManager()->nameForHost(job.client()));
         if (job.server())
             setText(JobColumnServer, view->hostInfoManager()->nameForHost(job.server()));
@@ -75,11 +73,11 @@ void JobListViewItem::updateText(const Job& job)
             setText(JobColumnServer, QString());
     }
     setText(JobColumnState, job.stateAsString());
-    setText(JobColumnReal, QString::number(job.real_msec));
-    setText(JobColumnUser, QString::number(job.user_msec));
-    setText(JobColumnFaults, QString::number(job.pfaults));
-    setText(JobColumnSizeIn, tr("%1 KiB").arg(QString::number(job.in_uncompressed/1024, 'g', 2)));
-    setText(JobColumnSizeOut, tr("%1 KiB").arg(QString::number(job.out_uncompressed/1024, 'g', 2)));
+    setText(JobColumnReal, job.formattedRealTime());
+    setText(JobColumnUser, job.formattedUserTime());
+    setText(JobColumnFaults, QString::number(job.pageFaults()));
+    setText(JobColumnSizeIn, job.formattedInputSize());
+    setText(JobColumnSizeOut, job.formattedOutputSize());
 
     if (fileNameChanged)
         updateFileName();
@@ -93,25 +91,19 @@ void JobListViewItem::updateFileName()
         return;
 
     QChar separator = QDir::separator();
-
-    QString fileName = mJob.fileName();
+    QString fileName = m_job.fileName();
 
     const int numberOfFilePathParts = view->numberOfFilePathParts();
-    if (numberOfFilePathParts > 0)
-    {
+    if (numberOfFilePathParts > 0) {
         int counter = numberOfFilePathParts;
         int index = 0;
-        do
-        {
+        do {
             index = fileName.lastIndexOf(separator, index - 1);
-        }
-        while (counter-- && (index > 0));
+        } while (counter-- && (index > 0));
 
         if (index > 0)
             fileName = QString::fromLatin1("...") + fileName.mid(index);
-    }
-    else if (numberOfFilePathParts == 0)
-    {
+    } else if (numberOfFilePathParts == 0) {
         fileName = fileName.mid(fileName.lastIndexOf(separator) + 1);
     }
 
@@ -120,25 +112,23 @@ void JobListViewItem::updateFileName()
 
 bool JobListViewItem::operator<(const QTreeWidgetItem &item) const
 {
-    const JobListViewItem* thisItem = this;
-    const JobListViewItem* otherItem = dynamic_cast<const JobListViewItem*>(&item);
+    const Job& otherJob = dynamic_cast<const JobListViewItem*>(&item)->job();
 
     const int column = (treeWidget() ? treeWidget()->sortColumn() : 0);
 
-    switch (column)
-    {
+    switch (column) {
     case JobColumnID:
-        return thisItem->mJob.jobId() < otherItem->mJob.jobId();
+        return m_job.jobId() < otherJob.jobId();
     case JobColumnReal:
-        return thisItem->mJob.real_msec < otherItem->mJob.real_msec;
+        return m_job.realTime() < otherJob.realTime();
     case JobColumnUser:
-        return thisItem->mJob.user_msec < otherItem->mJob.user_msec;
+        return m_job.userTime() < otherJob.userTime();
     case JobColumnFaults:
-        return thisItem->mJob.pfaults < otherItem->mJob.pfaults;
+        return m_job.pageFaults() < otherJob.pageFaults();
     case JobColumnSizeIn:
-        return thisItem->mJob.in_uncompressed < otherItem->mJob.in_uncompressed;
+        return m_job.inputSize() < otherJob.inputSize();
     case JobColumnSizeOut:
-        return thisItem->mJob.out_uncompressed < otherItem->mJob.out_uncompressed;
+        return m_job.outputSize() < otherJob.outputSize();
     default:
         return (QTreeWidgetItem::operator<(item));
     }
@@ -167,18 +157,16 @@ JobListView::JobListView(const HostInfoManager* manager,
 
     // Auto adjust columns according to their content
     QHeaderView* headerView = header();
-    for (int i = 0; i < nHeaders; ++i) {
+    for (int i = 0; i < nHeaders; ++i)
         headerView->setResizeMode(i, QHeaderView::ResizeToContents);
-    }
+
     headerView->setStretchLastSection(false);
 
     setAllColumnsShowFocus(true);
-
     setSortingEnabled(true);
     sortByColumn(JobColumnID, Qt::DescendingOrder);
 
-    connect(m_expireTimer, SIGNAL(timeout()),
-            this, SLOT(slotExpireFinishedJobs()));
+    connect(m_expireTimer, SIGNAL(timeout()), this, SLOT(slotExpireFinishedJobs()));
 }
 
 
@@ -208,10 +196,9 @@ void JobListView::setNumberOfFilePathParts(int number)
         return;
 
     m_numberOfFilePathParts = number;
-
-    for (ItemMap::const_iterator it(m_items.begin()),
-                                  itEnd(m_items.end());
-          it != itEnd; ++it)
+    ItemMap::const_iterator it(m_items.begin());
+    ItemMap::const_iterator itEnd(m_items.end());
+    for (; it != itEnd; ++it)
         it.value()->updateFileName();
 }
 
@@ -228,13 +215,9 @@ void JobListView::setClientColumnVisible(bool visible)
         return;
 
     if (visible)
-    {
         setColumnWidth(JobColumnClient, 50); // at least the user can see it again
-    }
     else
-    {
         setColumnWidth(JobColumnClient, 0);
-    }
 }
 
 
@@ -250,13 +233,9 @@ void JobListView::setServerColumnVisible(bool visible)
         return;
 
     if (visible)
-    {
         setColumnWidth(JobColumnServer, 50); // at least the user can see it again
-    }
     else
-    {
         setColumnWidth(JobColumnServer, 0);
-    }
 }
 
 
@@ -278,7 +257,6 @@ void JobListView::clear()
 
     m_items.clear();
     m_finishedJobs.clear();
-
     QTreeWidget::clear();
 }
 
@@ -290,8 +268,8 @@ void JobListView::slotExpireFinishedJobs()
     // this list is sorted by the age of the finished jobs, the oldest is the first
     // so we've to find the first job which isn't old enough to expire
     FinishedJobs::iterator it = m_finishedJobs.begin();
-    for (const FinishedJobs::iterator itEnd = m_finishedJobs.end(); it != itEnd; ++it)
-    {
+    const FinishedJobs::iterator itEnd = m_finishedJobs.end();
+    for (; it != itEnd; ++it) {
         if (currentTime - (*it).first < (uint)m_expireDuration)
             break;
 
@@ -307,12 +285,9 @@ void JobListView::slotExpireFinishedJobs()
 
 void JobListView::expireItem(JobListViewItem* item)
 {
-    if (m_expireDuration == 0)
-    {
+    if (m_expireDuration == 0) {
         removeItem(item);
-    }
-    else if (m_expireDuration > 0)
-    {
+    } else if (m_expireDuration > 0) {
         m_finishedJobs.push_back(FinishedJob(QDateTime::currentDateTime().toTime_t(), item));
 
         if (!m_expireTimer->isActive())
