@@ -107,7 +107,7 @@ QString StarViewConfigDialog::archFilter()
 void StarViewConfigDialog::slotSuppressDomainName(bool b)
 {
     suppressDomain = b;
-    configChanged();
+    emit configChanged();
 }
 
 
