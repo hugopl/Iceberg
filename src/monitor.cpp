@@ -202,10 +202,11 @@ void Monitor::handleGetcs(Msg* _m)
     if (!m)
         return;
 
-    m_rememberedJobs[m->job_id] = Job(m->job_id, m->clientid,
-                                      m->filename.c_str(),
-                                      m->lang == CompileJob::Lang_C ? "C" : "C++");
-    m_view->update(m_rememberedJobs[m->job_id]);
+    Job job(m->job_id, m->clientid, QString::fromStdString(m->filename),
+            m->lang == CompileJob::Lang_C ? "C" : "C++");
+
+    m_rememberedJobs[m->job_id] = job;
+    m_view->update(job);
 }
 
 void Monitor::handleLocalBegin(Msg* _m)
@@ -214,10 +215,11 @@ void Monitor::handleLocalBegin(Msg* _m)
     if (!m)
         return;
 
-    m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
-                                      m->file.c_str(), "C++");
-    m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
-    m_view->update(m_rememberedJobs[m->job_id]);
+    Job job(m->job_id, m->hostid, QString::fromStdString(m->file), "C++");
+    job.setState(Job::LocalOnly);
+
+    m_rememberedJobs[m->job_id] = job;
+    m_view->update(job);
 }
 
 void Monitor::handleLocalDone(Msg* _m)
