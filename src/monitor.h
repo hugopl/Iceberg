@@ -42,8 +42,8 @@ public:
     Monitor(HostInfoManager*, QObject* parent);
     ~Monitor();
 
-    void setCurrentNet(const QByteArray& name) { m_currentNetName = name; }
-    QByteArray currentNet() const { return m_currentNetName; }
+    void setCurrentNet(const QString& name) { m_currentNetName = name; }
+    QString currentNet() const { return m_currentNetName; }
 
     void setCurrentView(StatusView*, bool rememberJobs);
     void checkScheduler(bool deleteit = false);
@@ -69,7 +69,7 @@ private:
     StatusView* m_view;
     JobList m_rememberedJobs;
     MsgChannel* m_scheduler;
-    QByteArray m_currentNetName;
+    QString m_currentNetName;
     bool m_schedulerOnline;
 
     DiscoverSched* m_discover;
