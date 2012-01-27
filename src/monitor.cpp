@@ -28,15 +28,11 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
-#include <icecc/comm.h>
 #include <QSocketNotifier>
 #include <QTimer>
 
-#include <list>
-#include <iostream>
+#include <icecc/comm.h>
 #include <ctime>
-
-using namespace std;
 
 Monitor::Monitor(HostInfoManager* m, QObject *parent)
     : QObject(parent),
@@ -96,28 +92,29 @@ void Monitor::slotCheckScheduler()
     if (m_scheduler)
         return;
 
-    list<string> names;
+    QStringList names;
 
     if (!m_currentNetName.isEmpty())
-        names.push_front(m_currentNetName.data());
+        names.push_front(m_currentNetName);
     else
         names.push_front("ICECREAM");
 
     if (!qgetenv("USE_SCHEDULER").isEmpty())
         names.push_front(""); // try $USE_SCHEDULER
 
-    for (list<string>::const_iterator it = names.begin(); it != names.end(); ++it) {
-        m_currentNetName = it->c_str();
+    QStringList::const_iterator it = names.constBegin();
+    for (; it != names.constEnd(); ++it) {
+        m_currentNetName = *it;
+
         if (!m_discover || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched (m_currentNetName.data());
+            m_discover = new DiscoverSched(m_currentNetName.toStdString());
         }
 
         m_scheduler = m_discover->try_get_scheduler();
-
         if (m_scheduler) {
-            m_hostInfoManager->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
-            m_hostInfoManager->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
+            m_hostInfoManager->setSchedulerName(QString::fromStdString(m_discover->schedulerName()));
+            m_hostInfoManager->setNetworkName(QString::fromStdString(m_discover->networkName()));
             m_scheduler->setBulkTransfer();
 
             delete m_discover;
@@ -203,10 +200,11 @@ void Monitor::handleGetcs(Msg* _m)
     if (!m)
         return;
 
-    m_rememberedJobs[m->job_id] = Job(m->job_id, m->clientid,
-                                      m->filename.c_str(),
-                                      m->lang == CompileJob::Lang_C ? "C" : "C++");
-    m_view->update(m_rememberedJobs[m->job_id]);
+    Job job(m->job_id, m->clientid, QString::fromStdString(m->filename),
+            m->lang == CompileJob::Lang_C ? "C" : "C++");
+
+    m_rememberedJobs[m->job_id] = job;
+    m_view->update(job);
 }
 
 void Monitor::handleLocalBegin(Msg* _m)
@@ -215,10 +213,11 @@ void Monitor::handleLocalBegin(Msg* _m)
     if (!m)
         return;
 
-    m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
-                                      m->file.c_str(), "C++");
-    m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
-    m_view->update(m_rememberedJobs[m->job_id]);
+    Job job(m->job_id, m->hostid, QString::fromStdString(m->file), "C++");
+    job.setState(Job::LocalOnly);
+
+    m_rememberedJobs[m->job_id] = job;
+    m_view->update(job);
 }
 
 void Monitor::handleLocalDone(Msg* _m)
@@ -250,10 +249,10 @@ void Monitor::handleStats(Msg* _m)
     if (!m)
         return;
 
-    QStringList statmsg = QString(m->statmsg.c_str()).split('\n');
+    QStringList message = QString::fromStdString(m->statmsg).split('\n');
     HostInfo::StatsMap stats;
     QStringList::ConstIterator it;
-    for (it = statmsg.constBegin(); it != statmsg.constEnd(); ++it) {
+    for (it = message.constBegin(); it != message.constEnd(); ++it) {
         QString key = *it;
         key = key.left(key.indexOf(':'));
         QString value = *it;
