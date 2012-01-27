@@ -75,16 +75,16 @@ public:
     QColor hostColor(unsigned int id) const;
     unsigned int maxJobs(unsigned int id) const;
 
-    QString schedulerName() const { return m_schedulerName; }
-    void setSchedulerName(const QString& name) { m_schedulerName = name; }
+    QByteArray schedulerName() const { return m_schedulerName; }
+    void setSchedulerName(const QByteArray& name) { m_schedulerName = name; }
 
-    QString networkName() const { return m_networkName; }
-    void setNetworkName(const QString& name) { m_networkName = name; }
+    QByteArray networkName() const { return m_networkName; }
+    void setNetworkName(const QByteArray& name) { m_networkName = name; }
 
 private:
     HostMap m_hostMap;
-    QString m_schedulerName;
-    QString m_networkName;
+    QByteArray m_schedulerName;
+    QByteArray m_networkName;
 };
 
 #endif

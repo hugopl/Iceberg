@@ -32,7 +32,6 @@
 #include <QSocketNotifier>
 #include <QTimer>
 
-#include <list>
 #include <iostream>
 #include <ctime>
 
@@ -96,18 +95,18 @@ void Monitor::slotCheckScheduler()
     if (m_scheduler)
         return;
 
-    list<string> names;
+    QList<QByteArray> names;
 
     if (!m_currentNetName.isEmpty())
-        names.push_front(m_currentNetName.data());
+        names.push_front(m_currentNetName);
     else
         names.push_front("ICECREAM");
 
     if (!qgetenv("USE_SCHEDULER").isEmpty())
         names.push_front(""); // try $USE_SCHEDULER
 
-    for (list<string>::const_iterator it = names.begin(); it != names.end(); ++it) {
-        m_currentNetName = it->c_str();
+    for (QList<QByteArray>::const_iterator it = names.begin(); it != names.end(); ++it) {
+        m_currentNetName = *it;
         if (!m_discover || m_discover->timed_out()) {
             delete m_discover;
             m_discover = new DiscoverSched (m_currentNetName.data());
@@ -116,8 +115,8 @@ void Monitor::slotCheckScheduler()
         m_scheduler = m_discover->try_get_scheduler();
 
         if (m_scheduler) {
-            m_hostInfoManager->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
-            m_hostInfoManager->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
+            m_hostInfoManager->setSchedulerName(m_discover->schedulerName().c_str());
+            m_hostInfoManager->setNetworkName(m_discover->networkName().c_str());
             m_scheduler->setBulkTransfer();
 
             delete m_discover;

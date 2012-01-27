@@ -483,8 +483,8 @@ bool StarView::event (QEvent* e)
                            "<p><table><tr><td>"
                            "<img align=\"right\" source=\":/computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
-                           "<tr><td>" + tr("Host: %1").arg(hostInfoManager()->schedulerName()) + "</td></tr>" +
-                           "<tr><td>" + tr("Network name: %1").arg(hostInfoManager()->networkName()) + "</td></tr>" +
+                           "<tr><td>" + tr("Host: %1").arg(QString(hostInfoManager()->schedulerName())) + "</td></tr>" +
+                           "<tr><td>" + tr("Network name: %1").arg(QString(hostInfoManager()->networkName())) + "</td></tr>" +
                            "</table>"
                            "</td></tr></table></p>", this, itemRect);
         }
