@@ -471,8 +471,8 @@ bool StarView::event (QEvent* e)
                            + "</td></tr>" +
                            "<tr><td>" + tr("Platform:") + "</td><td>" +
                            hostInfo->platform() + "</td></tr>" +
-                           "<tr><td>" + tr("Id:") + "</td><td>" +
-                           QString::number(hostInfo->id()) + "</td></tr>" +
+                           "<tr><td>" + tr("MaxJobs:") + "</td><td>" +
+                           QString::number(hostInfo->maxJobs()) + "</td></tr>" +
                            "<tr><td>" + tr("Speed:") + "</td><td>" +
                            QString::number(hostInfo->serverSpeed()) + "</td></tr>" +
                            "</table>"
