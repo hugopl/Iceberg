@@ -235,7 +235,8 @@ void MainWindow::showAboutDialog()
         "Copyright (c) 2003,2004 Cornelius Schumacher &lt;schumacher@kde.org><br>"
         "Copyright (c) 2011, 2012 Hugo Parente Lima &lt;hugo.pl@gmail.com><br>"
         "Copyright (c) 2011, 2012 Anselmo L. S. Melo &lt;anselmolsm@gmail.com><br>"
-        "Copyright (c) 2011, 2012 Luis Gabriel Lima &lt;lampih@gmail.com></p>");
+        "Copyright (c) 2011, 2012 Luis Gabriel Lima &lt;lampih@gmail.com></p>"
+        "Copyright (c) 2011, 2012 Luciano Miguel Wolf &lt;lucianomw@gmail.com></p>");
     text->setOpenExternalLinks(true);
     layout->addWidget(text);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
