@@ -1,0 +1,59 @@
+#!/usr/bin/env python2
+import sys
+import subprocess
+import re
+
+URL_TEMPLATE = "https://github.com/%s/%s/pull/new/%s" # githubUser, projectName, currentBranch
+
+def fatalError(msg):
+    print(msg)
+    exit(1)
+
+githubUser = None
+userRemote = None
+projectName = None
+currentBranch = None
+
+gitConfig = subprocess.Popen(["git", "config", "github.user"], stdout=subprocess.PIPE)
+if gitConfig.returncode:
+    fatalError("Execute:\n\n  git config github.user YOUR_GITHUB_USER\n\nBefore using this script, YOUR_GITHUB_USER is your github user, not the e-mail used to login!")
+githubUser = "".join(gitConfig.stdout.readlines()).strip()
+
+gitSimolicRef = subprocess.Popen(["git", "symbolic-ref", "-q", "HEAD"], stdout=subprocess.PIPE)
+currentBranch = "".join(gitSimolicRef.stdout.readlines()).strip()
+currentBranch = currentBranch.replace("refs/heads/", "")
+if gitSimolicRef.returncode or not currentBranch:
+    fatalError("You need to be on a branch.")
+
+# try to find the project name
+gitConfigList = subprocess.Popen(["git", "config", "--local", "-l"], stdout=subprocess.PIPE)
+projectRemoteRegex = re.compile("remote\.\w+\.url=[\w\d\.@]+:([\w\d]+)/[\w\d]+\.git")
+userRemoteRegex = re.compile("remote\.(\w+)\.url=[\w\d\.@]+:%s/[\w\d]+\.git" % githubUser)
+
+for line in gitConfigList.stdout:
+    if not projectName:
+        m = projectRemoteRegex.match(line)
+        if m and m.group(1) != githubUser:
+            projectName = m.group(1)
+
+    if not userRemote:
+        m2 = userRemoteRegex.match(line)
+        if m2:
+            userRemote = m2.group(1)
+
+    if projectName and userRemote:
+        break
+
+if not projectName:
+    fatalError("Can't deduce the project name on github, did you add the github remote?")
+if not userRemote:
+    fatalError("Can't deduce the name of remote used by you.")
+
+retval = subprocess.call(["git", "push", userRemote, currentBranch])
+if retval:
+    answer = raw_input("Failed to push your branch, want to force? [Y/n]").strip().lower()
+    if answer and answer != "y":
+        exit(1)
+    else:
+        retval = subprocess.call(["git", "push", "-f", userRemote, currentBranch])
+subprocess.call(["xdg-open", URL_TEMPLATE % (githubUser, projectName, currentBranch)])
