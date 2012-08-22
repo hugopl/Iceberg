@@ -23,6 +23,7 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
     ${PC_ICECC_INCLUDEDIR}
     ${PC_ICECC_INCLUDE_DIRS}
     /opt/icecream/include
+    /usr/lib/icecream/include
   )
 
   find_library(LIBICECREAM_LIBRARY NAMES icecc
@@ -30,6 +31,7 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
     ${PC_ICECC_LIBDIR}
     ${PC_ICECC_LIBRARY_DIRS}
     /opt/icecream/lib
+    /usr/lib/icecream/lib
   )
 
   set( LIBICECREAM_LIBRARIES ${LIBICECREAM_LIBRARY} CACHE INTERNAL "The libraries for libicecream" )
