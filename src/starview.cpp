@@ -461,7 +461,7 @@ bool StarView::event (QEvent* e)
         const QPoint gp(static_cast<QHelpEvent*>(e)->globalPos());
         const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         if (hostInfo) {
-            QToolTip::showText(gp+QPoint(10,10),
+            QToolTip::showText(gp+QPoint(5,5),
                            "<p><table><tr><td>"
                            "<img align=\"right\" source=\":/computer.png\"><br><b>" + item->hostName() +
                            "</b><br>" +
@@ -479,7 +479,7 @@ bool StarView::event (QEvent* e)
 
                            "</td></tr></table></p>", this, itemRect);
         } else {
-            QToolTip::showText(gp+QPoint(10,10),
+            QToolTip::showText(gp+QPoint(5,5),
                            "<p><table><tr><td>"
                            "<img align=\"right\" source=\":/computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
