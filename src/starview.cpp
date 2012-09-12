@@ -463,7 +463,7 @@ bool StarView::event (QEvent* e)
         if (hostInfo) {
             QToolTip::showText(gp+QPoint(5,5),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\":/computer.png\"><br><b>" + item->hostName() +
+                           "<img align=\"right\" source=\":/images/computer.png\"><br><b>" + item->hostName() +
                            "</b><br>" +
 
                            "<table>" +
@@ -481,7 +481,7 @@ bool StarView::event (QEvent* e)
         } else {
             QToolTip::showText(gp+QPoint(5,5),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\":/computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
+                           "<img align=\"right\" source=\":/images/computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
                            "<tr><td>" + tr("Host: %1").arg(QString(hostInfoManager()->schedulerName())) + "</td></tr>" +
                            "<tr><td>" + tr("Network name: %1").arg(QString(hostInfoManager()->networkName())) + "</td></tr>" +
