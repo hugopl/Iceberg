@@ -20,5 +20,7 @@ iceberg:usePackage(qtGui)
 iceberg:usePackage(qtNetwork)
 iceberg:usePackage(icecc)
 iceberg:useQtAutomoc()
+-- icecc uses dlopen but it's pkg-config doesn't tell this.
+UNIX:iceberg:addLinkLibraries("dl")
 
 iceberg:install("bin")
