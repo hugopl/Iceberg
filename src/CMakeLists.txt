@@ -1,8 +1,12 @@
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(libCapNG REQUIRED libcap-ng)
 find_package(Icecream REQUIRED)
 
 add_definitions (${QT_DEFINITIONS} )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
+                    ${libCapNG_INCLUDE_DIRS}
                     ${LIBICECREAM_INCLUDE_DIR}
                     ${QT_INCLUDE_DIR}
                     ${QT_QTCORE_INCLUDE_DIR}
@@ -27,7 +31,13 @@ qt4_automoc(${iceberg_SRCS})
 qt4_add_resources(iceberg_RCC icons.qrc)
 add_executable(iceberg ${iceberg_SRCS} ${iceberg_RCC})
 
-target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(iceberg
+                      ${QT_QTCORE_LIBRARY}
+                      ${QT_QTGUI_LIBRARY}
+                      ${libCapNG_LIBRARIES}
+                      ${LIBICECREAM_LIBRARIES}
+                      ${QT_QTNETWORK_LIBRARY}
+                      ${CMAKE_DL_LIBS})
 
 ########### install files ###############
 
