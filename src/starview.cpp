@@ -42,7 +42,8 @@
 #include <QDebug>
 #include <cmath>
 
-static bool suppressDomain = false;
+static bool s_shouldSuppressDomainName = false;
+static bool s_shouldHideAllText = false;
 
 StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     : QDialog(parent)
@@ -60,7 +61,8 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     QSettings settings;
     const int nodesPerRing = settings.value("StarView/NodesPerRing", 25).toInt();
     const QString archFilter = settings.value("StarView/ArchFilter", "").toString();
-    const bool supressDomainName = settings.value("StarView/SupressDomainName", false).toBool();
+    s_shouldSuppressDomainName = settings.value("StarView/SuppressDomainName", false).toBool();
+    s_shouldHideAllText = settings.value("StarView/HideAllText", false).toBool();
 
     m_nodesPerRingSlider = new QSlider(Qt::Horizontal, this);
     m_nodesPerRingSlider->setMinimum(1);
@@ -68,27 +70,35 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     m_nodesPerRingSlider->setSingleStep(1);
     m_nodesPerRingSlider->setValue(nodesPerRing);
     nodesLayout->addWidget(m_nodesPerRingSlider);
-    connect(m_nodesPerRingSlider, SIGNAL(valueChanged(int)), SIGNAL(configChanged()));
-    connect(m_nodesPerRingSlider, SIGNAL(valueChanged(int)), SLOT(slotNodesPerRingChanged(int)));
 
     m_nodesPerRingLabel = new QLabel(QString::number(nodesPerRing), this);
     nodesLayout->addWidget(m_nodesPerRingLabel);
 
     label = new QLabel(tr("Architecture filter:"), this);
-    topLayout->addWidget(label);
     m_archFilterEdit = new QLineEdit(this);
-    m_archFilterEdit->setText(archFilter);
-    topLayout->addWidget(m_archFilterEdit);
-    connect(m_archFilterEdit, SIGNAL(textChanged(const QString &)), SIGNAL(configChanged()));
-
-    m_suppressDomainName = new QCheckBox(tr("Suppress domain name"), this);
-    m_suppressDomainName->setChecked(supressDomainName);
-    topLayout->addWidget(m_suppressDomainName);
-    connect(m_suppressDomainName, SIGNAL(toggled(bool)), SLOT(slotSuppressDomainName(bool)));
-
+    m_hideAllTextCheckBox = new QCheckBox(tr("Hide all text"), this);
+    m_suppressDomainNameCheckBox = new QCheckBox(tr("Suppress domain name"), this);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal);
+
+    topLayout->addWidget(label);
+    topLayout->addWidget(m_archFilterEdit);
+    topLayout->addWidget(m_hideAllTextCheckBox);
+    topLayout->addWidget(m_suppressDomainNameCheckBox);
     topLayout->addWidget(buttonBox);
+
+    connect(m_nodesPerRingSlider, SIGNAL(valueChanged(int)), SIGNAL(configChanged()));
+    connect(m_nodesPerRingSlider, SIGNAL(valueChanged(int)), SLOT(slotNodesPerRingChanged(int)));
+    connect(m_archFilterEdit, SIGNAL(textChanged(const QString &)), SIGNAL(configChanged()));
+    connect(m_hideAllTextCheckBox, SIGNAL(toggled(bool)), SLOT(slotHideAllText(bool)));
+    connect(m_suppressDomainNameCheckBox, SIGNAL(toggled(bool)), SLOT(slotSuppressDomainName(bool)));
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(hide()));
+
+    m_archFilterEdit->setText(archFilter);
+
+    if (s_shouldHideAllText)
+        m_hideAllTextCheckBox->setChecked(s_shouldHideAllText);
+    else
+        m_suppressDomainNameCheckBox->setChecked(s_shouldSuppressDomainName);
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged(int nodes)
@@ -111,17 +121,28 @@ QString StarViewConfigDialog::archFilter()
     return m_archFilterEdit->text();
 }
 
-bool StarViewConfigDialog::suppressDomainName() const
+bool StarViewConfigDialog::shouldSuppressDomainName() const
 {
-    return m_suppressDomainName;
+    return m_suppressDomainNameCheckBox->isChecked();
+}
+
+bool StarViewConfigDialog::shouldHideAllText() const
+{
+    return m_hideAllTextCheckBox->isChecked();
 }
 
 void StarViewConfigDialog::slotSuppressDomainName(bool b)
 {
-    suppressDomain = b;
+    s_shouldSuppressDomainName = b;
     emit configChanged();
 }
 
+void StarViewConfigDialog::slotHideAllText(bool b)
+{
+    s_shouldHideAllText = b;
+    m_suppressDomainNameCheckBox->setEnabled(!b);
+    emit configChanged();
+}
 
 HostItem::HostItem(const QString &text, QGraphicsScene *canvas, HostInfoManager *m)
     : QGraphicsItemGroup(0, canvas),
@@ -182,15 +203,18 @@ QString HostItem::hostName() const
 
 void HostItem::updateName()
 {
-    if (m_hostInfo) {
+    if (s_shouldHideAllText)
+        m_textItem->setText("");
+    else if (m_hostInfo) {
         QString s = m_hostInfo->name();
-        if (suppressDomain) {
+        if (s_shouldSuppressDomainName) {
             int l = s.indexOf('.');
             if (l>0)
                 s.truncate(l);
         }
         m_textItem->setText(s);
-    }
+    } else // Scheduler.
+        m_textItem->setText(m_hostInfoManager->networkName());
 
     QRectF r = m_textItem->boundingRect();
     m_baseWidth = r.width() + 10 ;
@@ -511,12 +535,15 @@ void StarView::slotConfigChanged()
     }
 
     arrangeHostItems();
+    m_schedulerItem->updateName();
+    centerSchedulerItem();
 
     //write settings
     QSettings settings;
     settings.setValue("StarView/NodesPerRing", m_configDialog->nodesPerRing());
     settings.setValue("StarView/ArchFilter", m_configDialog->archFilter());
-    settings.setValue("StarView/SupressDomainName", m_configDialog->suppressDomainName());
+    settings.setValue("StarView/HideAllText", m_configDialog->shouldHideAllText());
+    settings.setValue("StarView/SuppressDomainName", m_configDialog->shouldSuppressDomainName());
 }
 
 void StarView::arrangeHostItems()
@@ -526,7 +553,7 @@ void StarView::arrangeHostItems()
     int ringCount = int(count / nodesPerRing) + 1;
 
     double radiusFactor = 2.5;
-    if (suppressDomain)
+    if (s_shouldSuppressDomainName)
         radiusFactor = 4;
 
     const int xRadius = qRound(m_canvas->width() / radiusFactor);
