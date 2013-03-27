@@ -46,7 +46,8 @@ public:
     StarViewConfigDialog(QWidget *parent);
 
     int nodesPerRing();
-    bool suppressDomainName() const;
+    bool shouldSuppressDomainName() const;
+    bool shouldHideAllText() const;
 
     void setMaxNodes(int);
 
@@ -55,6 +56,7 @@ public:
 protected slots:
     void slotNodesPerRingChanged(int nodes);
     void slotSuppressDomainName(bool);
+    void slotHideAllText(bool);
 
 signals:
     void configChanged();
@@ -63,9 +65,9 @@ private:
     QSlider *m_nodesPerRingSlider;
     QLabel *m_nodesPerRingLabel;
     QLineEdit *m_archFilterEdit;
-    QCheckBox *m_suppressDomainName;
+    QCheckBox *m_suppressDomainNameCheckBox;
+    QCheckBox *m_hideAllTextCheckBox;
 };
-
 
 class HostItem : public QGraphicsItemGroup
 {
