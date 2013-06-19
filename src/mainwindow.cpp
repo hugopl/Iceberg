@@ -35,6 +35,7 @@
 #include "listview.h"
 #include "monitor.h"
 #include "starview.h"
+#include "blingblingview.h"
 #include "version.h"
 
 MainWindow::MainWindow(QWidget* parent)
@@ -68,6 +69,10 @@ MainWindow::MainWindow(QWidget* parent)
     m_viewMode->addAction(m_detailedView);
     connect(m_detailedView, SIGNAL(triggered()), this, SLOT(setupDetailedHostView()));
 
+    m_blingBlingView = modeMenu->addAction(tr("&Bling bling View"));
+    m_blingBlingView->setCheckable(true);
+    m_viewMode->addAction(m_blingBlingView);
+    connect(m_blingBlingView, SIGNAL(triggered()), this, SLOT(setupBlingBlingView()));
 
     QAction* actionStart = viewMenu->addAction(tr("&Start"));
     connect(actionStart, SIGNAL(triggered()), this, SLOT(startView()));
@@ -193,6 +198,11 @@ void MainWindow::setupStarView()
 void MainWindow::setupDetailedHostView()
 {
     setupView(new DetailedHostView(m_hostInfoManager, this), false);
+}
+
+void MainWindow::setupBlingBlingView()
+{
+    setupView(new BlingBlingView(m_hostInfoManager), false);
 }
 
 void MainWindow::stopView()

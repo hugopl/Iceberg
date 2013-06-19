@@ -50,6 +50,7 @@ private slots:
     void setupListView();
     void setupStarView();
     void setupDetailedHostView();
+    void setupBlingBlingView();
 
     void stopView();
     void startView();
@@ -79,6 +80,7 @@ private:
     QAction* m_listView;
     QAction* m_starView;
     QAction* m_detailedView;
+    QAction* m_blingBlingView;
     QAction* m_configView;
     QAction* m_systrayAction;
     QSystemTrayIcon* m_systemTrayIcon;
