@@ -128,10 +128,18 @@ HostListView::HostListView(HostInfoManager* manager, QWidget* parent)
     setHeaderLabels(headers);
 
     QHeaderView* headerView = header();
+
+#if QT_VERSION < 0x050000
     headerView->setResizeMode(ColumnID, QHeaderView::ResizeToContents);
     headerView->setResizeMode(ColumnMaxJobs, QHeaderView::ResizeToContents);
     headerView->setResizeMode(ColumnSpeed, QHeaderView::ResizeToContents);
     headerView->setResizeMode(ColumnLoad, QHeaderView::ResizeToContents);
+#else
+    headerView->setSectionResizeMode(ColumnID, QHeaderView::ResizeToContents);
+    headerView->setSectionResizeMode(ColumnMaxJobs, QHeaderView::ResizeToContents);
+    headerView->setSectionResizeMode(ColumnSpeed, QHeaderView::ResizeToContents);
+    headerView->setSectionResizeMode(ColumnLoad, QHeaderView::ResizeToContents);
+#endif
     headerView->setStretchLastSection(false);
 
     setAllColumnsShowFocus(true);

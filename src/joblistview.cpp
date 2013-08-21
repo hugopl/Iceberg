@@ -158,7 +158,11 @@ JobListView::JobListView(const HostInfoManager* manager,
     // Auto adjust columns according to their content
     QHeaderView* headerView = header();
     for (int i = 0; i < nHeaders; ++i)
+#if QT_VERSION < 0x050000
         headerView->setResizeMode(i, QHeaderView::ResizeToContents);
+#else
+        headerView->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+#endif
 
     headerView->setStretchLastSection(false);
 
