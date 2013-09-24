@@ -1,5 +1,11 @@
 find_package(Icecream REQUIRED)
 
+if (QT5)
+  find_package(Qt5Widgets REQUIRED)
+  set(CMAKE_AUTOMOC TRUE)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+endif(QT5)
+
 add_definitions (${QT_DEFINITIONS} )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
@@ -23,11 +29,22 @@ set(iceberg_SRCS
   starview.cpp
 )
 
-qt4_automoc(${iceberg_SRCS})
-qt4_add_resources(iceberg_RCC icons.qrc)
+if (QT5)
+  qt5_add_resources(iceberg_RCC icons.qrc)
+else(QT5)
+  qt4_automoc(${iceberg_SRCS})
+  qt4_add_resources(iceberg_RCC icons.qrc)
+endif(QT5)
+
 add_executable(iceberg ${iceberg_SRCS} ${iceberg_RCC})
 
-target_link_libraries(iceberg ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${CMAKE_DL_LIBS})
+set(ICEBERG_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${CMAKE_DL_LIBS})
+if (QT5)
+  qt5_use_modules(iceberg Widgets)
+  set (ICEBERG_LIBS ${ICEBERG_LIBS} ${Qt5Widgets_LIBRARIES})
+endif(QT5)
+
+target_link_libraries(iceberg ${ICEBERG_LIBS})
 
 ########### install files ###############
 

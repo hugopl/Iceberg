@@ -145,11 +145,12 @@ void StarViewConfigDialog::slotHideAllText(bool b)
 }
 
 HostItem::HostItem(const QString &text, QGraphicsScene *canvas, HostInfoManager *m)
-    : QGraphicsItemGroup(0, canvas),
+    : QGraphicsItemGroup(0),
       m_hostInfo(0),
       m_hostInfoManager(m),
       m_stateItem(0)
 {
+    canvas->addItem(this);
     init();
 
     m_textItem->setText(text);
@@ -158,11 +159,12 @@ HostItem::HostItem(const QString &text, QGraphicsScene *canvas, HostInfoManager 
 }
 
 HostItem::HostItem(HostInfo *hostInfo, QGraphicsScene *canvas, HostInfoManager *m)
-    : QGraphicsItemGroup(0, canvas),
+    : QGraphicsItemGroup(0),
       m_hostInfo(hostInfo),
       m_hostInfoManager(m),
       m_stateItem(0)
 {
+    canvas->addItem(this);
     init();
 }
 
@@ -175,11 +177,11 @@ void HostItem::init()
     m_baseWidth = 0;
     m_baseHeight = 0;
 
-    m_boxItem = new QGraphicsEllipseItem(this, scene());
+    m_boxItem = new QGraphicsEllipseItem(this);
     m_boxItem->setZValue(80);
     m_boxItem->setPen(QPen(Qt::NoPen));
 
-    m_textItem = new QGraphicsSimpleTextItem(this, scene());
+    m_textItem = new QGraphicsSimpleTextItem(this);
     m_textItem->setZValue(100);
 
     setHostColor(QColor(200, 200, 200));
@@ -264,7 +266,7 @@ void HostItem::createJobHalo(const Job &job)
 {
     QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
         centerPosX(), centerPosY(), m_baseWidth, m_baseHeight,
-        this, scene());
+        this);
 
     halo->setZValue(70 - m_jobHalos.size());
     halo->setPen(QPen(Qt::NoPen));
