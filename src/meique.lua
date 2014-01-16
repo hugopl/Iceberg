@@ -15,10 +15,11 @@ starview.cpp
 
 iceberg:addQtResource("icons.qrc")
 
-iceberg:usePackage(qtCore)
-iceberg:usePackage(qtGui)
-iceberg:usePackage(qtNetwork)
-iceberg:usePackage(icecc)
+iceberg:use(qtCore)
+iceberg:use(qtGui)
+iceberg:use(qtNetwork)
+useQt5:iceberg:use(qtWidgets)
+iceberg:use(icecc)
 iceberg:useQtAutomoc()
 -- icecc uses dlopen but it's pkg-config doesn't tell this.
 UNIX:iceberg:addLinkLibraries("dl")
