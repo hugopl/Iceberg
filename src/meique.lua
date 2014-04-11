@@ -45,3 +45,8 @@ iceberg:useQtAutomoc()
 iceberg:addLinkLibraries("dl")
 
 iceberg:install("bin")
+iceberg:install("iceberg.desktop", "share/applications")
+iceberg:install("../images/hi16-app-iceberg.png", "share/icons/hicolor/16x16/apps", "iceberg.png")
+iceberg:install("../images/hi22-app-iceberg.png", "share/icons/hicolor/22x22/apps", "iceberg.png")
+iceberg:install("../images/hi32-app-iceberg.png", "share/icons/hicolor/32x32/apps", "iceberg.png")
+iceberg:install("../images/hi48-app-iceberg.png", "share/icons/hicolor/48x48/apps", "iceberg.png")
