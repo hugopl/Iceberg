@@ -264,17 +264,11 @@ void HostItem::update(const Job &job)
 
 void HostItem::createJobHalo(const Job &job)
 {
-    QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
-        centerPosX(), centerPosY(), m_baseWidth, m_baseHeight,
-        this);
-
-    halo->setZValue(70 - m_jobHalos.size());
-    halo->setPen(QPen(Qt::NoPen));
-    halo->show();
-
+    QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(this);
+    halo->setPen(Qt::NoPen);
     m_jobHalos.insert(job, halo);
-
     updateHalos();
+    halo->show();
 }
 
 void HostItem::deleteJobHalo(const Job &job)
@@ -295,14 +289,15 @@ void HostItem::updateHalos()
     int count = 1;
 
     QMap<Job,QGraphicsEllipseItem*>::Iterator it;
-    for(it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it) {
+    const QPointF origin = m_boxItem->rect().topLeft();
+    for (it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it) {
         QGraphicsEllipseItem *halo = it.value();
-        halo->setRect(halo->x() - 5 - count * 3,
-                      halo->y() - 5 - count * 3,
+        halo->setRect(origin.x() - count * 3,
+                      origin.y() - count * 3,
                       m_baseWidth + count * 6,
                       m_baseHeight + count * 6);
-        halo->setBrush(m_hostInfoManager->hostColor(it.key().client()));
-        halo->setPen(Qt::NoPen);
+        halo->setBrush(m_hostInfoManager->hostColor(it.key().client()).darker(115));
+        halo->setZValue(70 - count);
         ++count;
     }
 }
