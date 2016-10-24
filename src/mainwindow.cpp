@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QAction* quitAction = fileMenu->addAction(tr("&Quit"));
+    quitAction->setShortcut(QKeySequence::Quit);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
