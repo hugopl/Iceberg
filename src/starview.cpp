@@ -219,10 +219,18 @@ void HostItem::updateName()
         m_textItem->setText(m_hostInfoManager->networkName());
 
     QRectF r = m_textItem->boundingRect();
-    m_baseWidth = r.width() + 10 ;
-    m_baseHeight = r.height() + 10 ;
 
-    m_boxItem->setRect(-5, -5, m_baseWidth, m_baseHeight);
+    int borderSize = 10;
+    const auto list = m_textItem->scene()->views();
+    if (!list.isEmpty()) {
+        int dpi = list.first()->logicalDpiX();
+        borderSize = qRound(10 * dpi / (float) 96);
+    }
+
+    m_baseWidth = r.width() + borderSize ;
+    m_baseHeight = r.height() + borderSize ;
+
+    m_boxItem->setRect(-borderSize / 2, -borderSize / 2, m_baseWidth, m_baseHeight);
 
     updateHalos();
 }
@@ -287,15 +295,24 @@ void HostItem::deleteJobHalo(const Job &job)
 void HostItem::updateHalos()
 {
     int count = 1;
+    int ringSize = -1;
 
     QMap<Job,QGraphicsEllipseItem*>::Iterator it;
     const QPointF origin = m_boxItem->rect().topLeft();
     for (it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it) {
         QGraphicsEllipseItem *halo = it.value();
-        halo->setRect(origin.x() - count * 3,
-                      origin.y() - count * 3,
-                      m_baseWidth + count * 6,
-                      m_baseHeight + count * 6);
+        if (ringSize == -1) {
+            ringSize = 3;
+            const auto list = halo->scene()->views();
+            if (!list.isEmpty()) {
+                int dpi = list.first()->logicalDpiX();
+                ringSize = qRound(ringSize * dpi / (float) 96);
+            }
+        }
+        halo->setRect(origin.x() - count * ringSize,
+                      origin.y() - count * ringSize,
+                      m_baseWidth + count * ringSize * 2,
+                      m_baseHeight + count * ringSize * 2);
         halo->setBrush(m_hostInfoManager->hostColor(it.key().client()).darker(115));
         halo->setZValue(70 - count);
         ++count;
