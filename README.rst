@@ -1,3 +1,8 @@
+Project archived
+================
+
+Icemon doesn't depends on KDE libs anymore... use it instead: https://github.com/icecc/icemon
+
 Iceberg
 =======
 
